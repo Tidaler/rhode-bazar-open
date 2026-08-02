@@ -1,0 +1,96 @@
+.root {
+    -color-violet: #5B2A86;
+    -color-violet-dark: #401D61;
+    -color-violet-light: #8B5FB0;
+    -color-or: #D4AF37;
+    -color-blanc: #FFFFFF;
+    -color-fond: #F5F2FA;
+    -color-texte: #2B2130;
+    -color-erreur: #C0392B;
+
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-background-color: -color-fond;
+}
+
+.ecran-connexion {
+    -fx-background-color: linear-gradient(to bottom right, -color-violet, -color-violet-dark);
+}
+
+.carte-connexion {
+    -fx-background-color: -color-blanc;
+    -fx-background-radius: 14;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 20, 0.2, 0, 6);
+    -fx-padding: 40;
+}
+
+.titre-application {
+    -fx-text-fill: -color-or;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+.sous-titre {
+    -fx-text-fill: derive(-color-violet, 20%);
+    -fx-font-size: 13px;
+}
+
+.titre-ecran {
+    -fx-text-fill: -color-violet;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.champ-saisie {
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: derive(-color-violet, 60%);
+    -fx-padding: 10;
+}
+
+.champ-saisie:focused {
+    -fx-border-color: -color-or;
+}
+
+.bouton-principal {
+    -fx-background-color: -color-violet;
+    -fx-text-fill: -color-blanc;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+}
+
+.bouton-principal:hover {
+    -fx-background-color: -color-violet-dark;
+}
+
+.bouton-lien {
+    -fx-background-color: transparent;
+    -fx-text-fill: -color-violet;
+    -fx-underline: false;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+}
+
+.bouton-lien:hover {
+    -fx-text-fill: -color-or;
+}
+
+.bouton-lien-actif {
+    -fx-text-fill: -color-or;
+    -fx-font-weight: bold;
+}
+
+.message-erreur {
+    -fx-text-fill: -color-erreur;
+    -fx-font-size: 12px;
+}
+
+.barre-application {
+    -fx-background-color: -color-violet;
+    -fx-padding: 12 20;
+}
+
+.barre-application .label {
+    -fx-text-fill: -color-blanc;
+}

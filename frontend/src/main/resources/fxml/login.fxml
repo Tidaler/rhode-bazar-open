@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.rhodebazar.frontend.controller.LoginController"
+           styleClass="ecran-connexion"
+           prefWidth="960" prefHeight="640">
+
+    <HBox alignment="TOP_RIGHT" StackPane.alignment="TOP_RIGHT">
+        <padding>
+            <Insets top="16" right="20" bottom="0" left="0"/>
+        </padding>
+        <Button fx:id="boutonFr" text="FR" styleClass="bouton-lien" onAction="#choisirFrancais"/>
+        <Label text=" | " textFill="WHITE"/>
+        <Button fx:id="boutonEn" text="EN" styleClass="bouton-lien" onAction="#choisirAnglais"/>
+    </HBox>
+
+    <VBox alignment="CENTER" spacing="16" styleClass="carte-connexion" maxWidth="380" maxHeight="420">
+        <Label text="%app.title" styleClass="titre-application"/>
+        <Label text="%login.subtitle" styleClass="sous-titre"/>
+
+        <VBox spacing="6">
+            <Label text="%login.email"/>
+            <TextField fx:id="champEmail" styleClass="champ-saisie"/>
+        </VBox>
+
+        <VBox spacing="6">
+            <Label text="%login.password"/>
+            <PasswordField fx:id="champMotDePasse" styleClass="champ-saisie"/>
+        </VBox>
+
+        <Label fx:id="labelErreur" styleClass="message-erreur" wrapText="true" managed="false" visible="false"/>
+
+        <Button fx:id="boutonConnexion" text="%login.button" styleClass="bouton-principal" maxWidth="Infinity" onAction="#seConnecter"/>
+    </VBox>
+
+</StackPane>

@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: rhode-bazar-backend
+  profiles:
+    active: sqlite
+  jackson:
+    default-property-inclusion: non_null
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8085
+
+rhodebazar:
+  jwt:
+    secret: ${RHODEBAZAR_JWT_SECRET:changez-moi-en-production-cle-secrete-locale-rhode-bazar}
+    expiration-minutes: 480
+
+---
+spring:
+  config:
+    activate:
+      on-profile: sqlite
+  datasource:
+    url: jdbc:sqlite:${RHODEBAZAR_DB_PATH:${user.home}/.rhodebazar/rhodebazar.db}?foreign_keys=on
+    driver-class-name: org.sqlite.JDBC
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+  flyway:
+    enabled: true
+    locations: classpath:db/migration/sqlite
+
+---
+spring:
+  config:
+    activate:
+      on-profile: mysql
+  datasource:
+    url: jdbc:mysql://${RHODEBAZAR_DB_HOST:localhost}:${RHODEBAZAR_DB_PORT:3306}/${RHODEBAZAR_DB_NAME:rhodebazar}?useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true
+    username: ${RHODEBAZAR_DB_USER:rhodebazar}
+    password: ${RHODEBAZAR_DB_PASSWORD:rhodebazar}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+  flyway:
+    enabled: true
+    locations: classpath:db/migration/mysql
