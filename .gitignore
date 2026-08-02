@@ -1,0 +1,51 @@
+# --- Java / Maven / Gradle ---
+target/
+build/
+out/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+.gradle/
+
+# --- IDE ---
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+bin/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Logs & runtime data ---
+logs/
+*.log
+*.pid
+
+# --- Local database files (SQLite dev) ---
+*.db
+*.sqlite
+*.sqlite3
+
+# --- Environment / secrets ---
+.env
+.env.*
+application-local.yml
+application-local.properties
+*.p12
+*.jks
+*.pem
+
+# --- Backups générés par l'application ---
+/backups/
+
+# --- Divers ---
+*.bak
+*.tmp
