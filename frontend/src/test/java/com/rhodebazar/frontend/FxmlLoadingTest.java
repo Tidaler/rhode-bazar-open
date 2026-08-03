@@ -49,9 +49,15 @@ class FxmlLoadingTest {
     }
 
     @Test
+    void ecranVentesSeCharge() throws Exception {
+        chargerSurThreadFx("/fxml/ventes.fxml", Locale.FRENCH);
+    }
+
+    @Test
     void ecransSeChargentEnAnglais() throws Exception {
         chargerSurThreadFx("/fxml/login.fxml", Locale.ENGLISH);
         chargerSurThreadFx("/fxml/stock.fxml", Locale.ENGLISH);
+        chargerSurThreadFx("/fxml/ventes.fxml", Locale.ENGLISH);
     }
 
     private void chargerSurThreadFx(String cheminFxml, Locale locale) throws Exception {

@@ -31,6 +31,10 @@ public final class SceneManager {
         charger("/fxml/stock.fxml", MessagesService.bundle().getString("stock.title"));
     }
 
+    public static void afficherEcranVentes() {
+        charger("/fxml/ventes.fxml", MessagesService.bundle().getString("vente.title"));
+    }
+
     private static void charger(String cheminFxml, String titre) {
         try {
             FXMLLoader loader = new FXMLLoader(

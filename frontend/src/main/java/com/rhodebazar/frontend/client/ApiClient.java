@@ -75,6 +75,14 @@ public class ApiClient {
         return versListe(get("/api/stock/alertes", token, AlerteStockDto[].class));
     }
 
+    public VenteDto creerVente(VenteRequest requete, String token) throws ApiException {
+        return envoyerAvecCorps("POST", "/api/ventes", requete, token, VenteDto.class, 201);
+    }
+
+    public List<VenteDto> listerVentes(String token) throws ApiException {
+        return versListe(get("/api/ventes", token, VenteDto[].class));
+    }
+
     private <T> List<T> versListe(T[] tableau) {
         return new ArrayList<>(Arrays.asList(tableau));
     }

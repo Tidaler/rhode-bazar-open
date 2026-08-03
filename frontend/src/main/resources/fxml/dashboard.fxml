@@ -26,8 +26,11 @@
                 <Insets top="40" right="40" bottom="40" left="40"/>
             </padding>
             <Label fx:id="labelRole" styleClass="titre-ecran"/>
-            <Button text="%dashboard.module.stock" styleClass="bouton-principal" onAction="#ouvrirStock"/>
-            <Label text="Les modules Ventes, Dépenses et Reporting seront ajoutés ici." wrapText="true" style="-fx-text-fill: gray;"/>
+            <HBox alignment="CENTER" spacing="12">
+                <Button text="%dashboard.module.stock" styleClass="bouton-principal" onAction="#ouvrirStock"/>
+                <Button text="%dashboard.module.ventes" styleClass="bouton-principal" onAction="#ouvrirVentes"/>
+            </HBox>
+            <Label text="Les modules Dépenses et Reporting seront ajoutés ici." wrapText="true" style="-fx-text-fill: gray;"/>
         </VBox>
     </center>
 

@@ -35,4 +35,9 @@ public class DashboardController {
     private void ouvrirStock() {
         SceneManager.afficherEcranStock();
     }
+
+    @FXML
+    private void ouvrirVentes() {
+        SceneManager.afficherEcranVentes();
+    }
 }
