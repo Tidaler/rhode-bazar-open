@@ -98,7 +98,7 @@ class VenteModuleIntegrationTest {
         depotId = objectMapper.readValue(reponseDepot, DepotDto.class).id();
 
         ProduitRequest requeteProduit = new ProduitRequest(
-                "Vase decoratif", null, categorieId, new BigDecimal("1000"), PRIX_VENTE, 2, "unite");
+                "Vase decoratif", null, categorieId, new BigDecimal("1000"), PRIX_VENTE, 2, "unite", null);
         String reponseProduit = mockMvc.perform(post("/api/produits")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)

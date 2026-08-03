@@ -14,5 +14,6 @@ public record ProduitRequest(
         @NotNull @DecimalMin(value = "0", inclusive = true) BigDecimal prixAchat,
         @NotNull @DecimalMin(value = "0", inclusive = true) BigDecimal prixVente,
         @Min(0) int stockMinimal,
-        @NotBlank @Size(max = 30) String unite) {
+        @NotBlank @Size(max = 30) String unite,
+        @Size(max = 64) String codeBarres) {
 }

@@ -68,6 +68,11 @@ public class ApiClient {
         return envoyerAvecCorps("PUT", "/api/produits/" + id, requete, token, ProduitDto.class, 200);
     }
 
+    public ProduitDto rechercherProduitParCodeBarres(String codeBarres, String token) throws ApiException {
+        String codeEncode = java.net.URLEncoder.encode(codeBarres, java.nio.charset.StandardCharsets.UTF_8);
+        return get("/api/produits/code-barres/" + codeEncode, token, ProduitDto.class);
+    }
+
     public void enregistrerMouvement(MouvementRequest requete, String token) throws ApiException {
         envoyerAvecCorps("POST", "/api/stock/mouvements", requete, token, Void.class, 201);
     }

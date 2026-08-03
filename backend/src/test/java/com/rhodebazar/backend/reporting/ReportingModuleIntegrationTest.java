@@ -210,7 +210,7 @@ class ReportingModuleIntegrationTest {
 
     private Long creerProduit(String token, Long categorieId, String nom, BigDecimal prixAchat, BigDecimal prixVente, int seuil)
             throws Exception {
-        ProduitRequest requete = new ProduitRequest(nom, null, categorieId, prixAchat, prixVente, seuil, "unite");
+        ProduitRequest requete = new ProduitRequest(nom, null, categorieId, prixAchat, prixVente, seuil, "unite", null);
         String reponse = mockMvc.perform(post("/api/produits")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)

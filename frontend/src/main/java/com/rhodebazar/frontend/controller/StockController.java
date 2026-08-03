@@ -61,6 +61,9 @@ public class StockController {
     @FXML
     private Label labelAlertes;
 
+    @FXML
+    private TextField champScanner;
+
     private final ApiClient apiClient = new ApiClient();
     private final ObservableList<ProduitDto> produits = FXCollections.observableArrayList();
     private List<CategorieDto> categories = List.of();
@@ -154,6 +157,34 @@ public class StockController {
         }));
     }
 
+    @FXML
+    private void scannerCodeBarres() {
+        String code = champScanner.getText();
+        if (code == null || code.isBlank()) {
+            return;
+        }
+        String token = jeton();
+        new Thread(() -> {
+            try {
+                ProduitDto produit = apiClient.rechercherProduitParCodeBarres(code.trim(), token);
+                Platform.runLater(() -> {
+                    champScanner.clear();
+                    produits.stream().filter(p -> p.id().equals(produit.id())).findFirst()
+                            .ifPresent(p -> {
+                                tableProduits.getSelectionModel().select(p);
+                                tableProduits.scrollTo(p);
+                            });
+                    ouvrirDialogueMouvement(produit).ifPresent(requete -> executerEtActualiser(() -> {
+                        apiClient.enregistrerMouvement(requete, jeton());
+                        return null;
+                    }));
+                });
+            } catch (ApiException e) {
+                Platform.runLater(() -> afficherErreur(e.getMessage()));
+            }
+        }, "scan-code-barres").start();
+    }
+
     private String jeton() {
         return Session.getUtilisateurConnecte().token();
     }
@@ -194,6 +225,13 @@ public class StockController {
         TextField champPrixVente = new TextField(existant != null ? existant.prixVente().toPlainString() : "0");
         TextField champStockMinimal = new TextField(existant != null ? String.valueOf(existant.stockMinimal()) : "0");
         TextField champUnite = new TextField(existant != null ? existant.unite() : "unite");
+        TextField champCodeBarres = new TextField(existant != null && existant.codeBarres() != null ? existant.codeBarres() : "");
+        champCodeBarres.setPromptText(messages.getString("stock.scanner.prompt"));
+        champCodeBarres.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, evenement -> {
+            if (evenement.getCode() == javafx.scene.input.KeyCode.ENTER) {
+                evenement.consume();
+            }
+        });
 
         GridPane grille = new GridPane();
         grille.setHgap(10);
@@ -205,7 +243,8 @@ public class StockController {
         grille.addRow(ligne++, new Label(messages.getString("produit.prixAchat")), champPrixAchat);
         grille.addRow(ligne++, new Label(messages.getString("produit.prixVente")), champPrixVente);
         grille.addRow(ligne++, new Label(messages.getString("produit.stockMinimal")), champStockMinimal);
-        grille.addRow(ligne, new Label(messages.getString("produit.unite")), champUnite);
+        grille.addRow(ligne++, new Label(messages.getString("produit.unite")), champUnite);
+        grille.addRow(ligne, new Label(messages.getString("produit.codeBarres")), champCodeBarres);
         dialogue.getDialogPane().setContent(grille);
 
         Button boutonOk = (Button) dialogue.getDialogPane().lookupButton(ButtonType.OK);
@@ -223,6 +262,7 @@ public class StockController {
             if (bouton != ButtonType.OK) {
                 return null;
             }
+            String codeBarresSaisi = champCodeBarres.getText();
             return new ProduitRequest(
                     champNom.getText().trim(),
                     champDescription.getText(),
@@ -230,7 +270,8 @@ public class StockController {
                     new BigDecimal(champPrixAchat.getText().trim()),
                     new BigDecimal(champPrixVente.getText().trim()),
                     parseEntierOuZero(champStockMinimal.getText()),
-                    champUnite.getText() == null || champUnite.getText().isBlank() ? "unite" : champUnite.getText().trim());
+                    champUnite.getText() == null || champUnite.getText().isBlank() ? "unite" : champUnite.getText().trim(),
+                    codeBarresSaisi == null || codeBarresSaisi.isBlank() ? null : codeBarresSaisi.trim());
         });
 
         return dialogue.showAndWait();

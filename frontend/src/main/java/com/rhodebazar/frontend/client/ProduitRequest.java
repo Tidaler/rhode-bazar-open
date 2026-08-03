@@ -9,5 +9,6 @@ public record ProduitRequest(
         BigDecimal prixAchat,
         BigDecimal prixVente,
         int stockMinimal,
-        String unite) {
+        String unite,
+        String codeBarres) {
 }

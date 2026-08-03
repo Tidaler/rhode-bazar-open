@@ -48,6 +48,9 @@ public class Produit {
     @Column(nullable = false, length = 30)
     private String unite = "unite";
 
+    @Column(name = "code_barres", length = 64, unique = true)
+    private String codeBarres;
+
     @Column(nullable = false)
     private boolean actif = true;
 

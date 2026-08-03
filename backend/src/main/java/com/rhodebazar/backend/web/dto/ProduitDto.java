@@ -12,6 +12,7 @@ public record ProduitDto(
         BigDecimal prixVente,
         int stockMinimal,
         String unite,
+        String codeBarres,
         boolean actif,
         int stockTotal,
         boolean stockCritique) {

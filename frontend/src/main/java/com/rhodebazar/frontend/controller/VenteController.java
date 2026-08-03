@@ -43,6 +43,9 @@ public class VenteController {
     private TextField champClient;
 
     @FXML
+    private TextField champScanner;
+
+    @FXML
     private ComboBox<ProduitDto> champProduit;
 
     @FXML
@@ -189,6 +192,37 @@ public class VenteController {
             return;
         }
 
+        ajouterLigneAuPanier(produit, quantite);
+    }
+
+    @FXML
+    private void scannerCodeBarres() {
+        String code = champScanner.getText();
+        if (code == null || code.isBlank() || !Session.estConnecte()) {
+            return;
+        }
+        String token = Session.getUtilisateurConnecte().token();
+        new Thread(() -> {
+            try {
+                ProduitDto produit = apiClient.rechercherProduitParCodeBarres(code.trim(), token);
+                Platform.runLater(() -> {
+                    champScanner.clear();
+                    ajouterLigneAuPanier(produit, 1);
+                });
+            } catch (ApiException e) {
+                Platform.runLater(() -> afficherErreur(e.getMessage()));
+            }
+        }, "scan-code-barres-vente").start();
+    }
+
+    private void ajouterLigneAuPanier(ProduitDto produit, int quantite) {
+        for (int i = 0; i < panier.size(); i++) {
+            LignePanier ligne = panier.get(i);
+            if (ligne.produit().id().equals(produit.id())) {
+                panier.set(i, new LignePanier(produit, ligne.quantite() + quantite));
+                return;
+            }
+        }
         panier.add(new LignePanier(produit, quantite));
     }
 

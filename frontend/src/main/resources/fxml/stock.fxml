@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -29,6 +30,14 @@
                 <Button fx:id="boutonModifier" text="%stock.modifierProduit" styleClass="bouton-principal" onAction="#modifierProduit" disable="true"/>
                 <Button fx:id="boutonMouvement" text="%stock.enregistrerMouvement" styleClass="bouton-principal" onAction="#enregistrerMouvement" disable="true"/>
                 <Button text="%stock.actualiser" styleClass="bouton-lien" onAction="#actualiser"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <padding>
+                    <Insets top="0" right="20" bottom="12" left="20"/>
+                </padding>
+                <Label text="%stock.scanner"/>
+                <TextField fx:id="champScanner" promptText="%stock.scanner.prompt" prefWidth="260" onAction="#scannerCodeBarres"/>
+                <Label text="%stock.scanner.aide" style="-fx-text-fill: gray; -fx-font-size: 11px;"/>
             </HBox>
         </VBox>
     </top>

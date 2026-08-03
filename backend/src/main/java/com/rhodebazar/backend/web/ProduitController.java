@@ -44,6 +44,11 @@ public class ProduitController {
         return produitService.stockParDepot(id);
     }
 
+    @GetMapping("/code-barres/{code}")
+    public ProduitDto trouverParCodeBarres(@PathVariable String code) {
+        return produitService.trouverParCodeBarres(code);
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)

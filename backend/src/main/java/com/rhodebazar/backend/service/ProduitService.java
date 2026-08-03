@@ -6,6 +6,7 @@ import com.rhodebazar.backend.domain.stock.Produit;
 import com.rhodebazar.backend.domain.stock.ProduitRepository;
 import com.rhodebazar.backend.domain.stock.StockProduitDepot;
 import com.rhodebazar.backend.domain.stock.StockProduitDepotRepository;
+import com.rhodebazar.backend.exception.ConflitDonneesException;
 import com.rhodebazar.backend.exception.RessourceIntrouvableException;
 import com.rhodebazar.backend.web.dto.ProduitDto;
 import com.rhodebazar.backend.web.dto.ProduitRequest;
@@ -45,6 +46,13 @@ public class ProduitService {
     public ProduitDto trouverDto(Long id) {
         Produit produit = trouver(id);
         return versDto(produit, sommeStock(id));
+    }
+
+    @Transactional(readOnly = true)
+    public ProduitDto trouverParCodeBarres(String codeBarres) {
+        Produit produit = produitRepository.findByCodeBarres(codeBarres)
+                .orElseThrow(() -> new RessourceIntrouvableException("Aucun produit pour ce code-barres : " + codeBarres));
+        return versDto(produit, sommeStock(produit.getId()));
     }
 
     @Transactional(readOnly = true)
@@ -88,6 +96,7 @@ public class ProduitService {
         produit.setPrixVente(requete.prixVente());
         produit.setStockMinimal(requete.stockMinimal());
         produit.setUnite(requete.unite());
+        produit.setCodeBarres(normaliserCodeBarres(requete.codeBarres(), produit.getId()));
 
         if (requete.categorieId() != null) {
             Categorie categorie = categorieRepository.findById(requete.categorieId())
@@ -97,6 +106,20 @@ public class ProduitService {
         } else {
             produit.setCategorie(null);
         }
+    }
+
+    private String normaliserCodeBarres(String codeBarres, Long idProduitActuel) {
+        if (codeBarres == null || codeBarres.isBlank()) {
+            return null;
+        }
+        String code = codeBarres.trim();
+        boolean dejaUtilise = idProduitActuel != null
+                ? produitRepository.existsByCodeBarresAndIdNot(code, idProduitActuel)
+                : produitRepository.existsByCodeBarres(code);
+        if (dejaUtilise) {
+            throw new ConflitDonneesException("Ce code-barres est deja utilise par un autre produit : " + code);
+        }
+        return code;
     }
 
     private Produit trouver(Long id) {
@@ -130,6 +153,7 @@ public class ProduitService {
                 p.getPrixVente(),
                 p.getStockMinimal(),
                 p.getUnite(),
+                p.getCodeBarres(),
                 p.isActif(),
                 stockTotal,
                 stockTotal <= p.getStockMinimal());

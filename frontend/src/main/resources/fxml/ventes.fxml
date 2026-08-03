@@ -36,6 +36,14 @@
             </HBox>
             <HBox spacing="10" alignment="CENTER_LEFT">
                 <padding>
+                    <Insets top="0" right="20" bottom="6" left="20"/>
+                </padding>
+                <Label text="%vente.scanner"/>
+                <TextField fx:id="champScanner" promptText="%vente.scanner.prompt" prefWidth="220" onAction="#scannerCodeBarres"/>
+                <Label text="%vente.scanner.aide" style="-fx-text-fill: gray; -fx-font-size: 11px;"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <padding>
                     <Insets top="6" right="20" bottom="12" left="20"/>
                 </padding>
                 <Label text="%vente.produit"/>

@@ -106,7 +106,7 @@ class StockModuleIntegrationTest {
 
         ProduitRequest requeteProduit = new ProduitRequest(
                 "Bougie parfumee vanille", "Bougie artisanale", categorieId,
-                new BigDecimal("1500"), new BigDecimal("2500"), 5, "unite");
+                new BigDecimal("1500"), new BigDecimal("2500"), 5, "unite", null);
         String reponseProduit = mockMvc.perform(post("/api/produits")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
