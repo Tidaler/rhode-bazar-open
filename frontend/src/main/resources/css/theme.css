@@ -103,3 +103,21 @@
     -fx-text-fill: -color-erreur;
     -fx-font-weight: bold;
 }
+
+.tuile-kpi {
+    -fx-background-color: -color-blanc;
+    -fx-background-radius: 10;
+    -fx-padding: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 8, 0.1, 0, 2);
+}
+
+.tuile-kpi-titre {
+    -fx-text-fill: derive(-color-violet, 20%);
+    -fx-font-size: 13px;
+}
+
+.tuile-kpi-valeur {
+    -fx-text-fill: -color-violet;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}

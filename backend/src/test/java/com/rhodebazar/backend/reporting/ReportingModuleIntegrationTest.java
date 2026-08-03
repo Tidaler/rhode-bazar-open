@@ -20,6 +20,7 @@ import com.rhodebazar.backend.web.dto.LoginResponse;
 import com.rhodebazar.backend.web.dto.MouvementRequest;
 import com.rhodebazar.backend.web.dto.ProduitDto;
 import com.rhodebazar.backend.web.dto.ProduitRequest;
+import com.rhodebazar.backend.web.dto.ResumeIaDto;
 import com.rhodebazar.backend.web.dto.SuggestionReapprovisionnementDto;
 import com.rhodebazar.backend.web.dto.TableauDeBordDto;
 import com.rhodebazar.backend.web.dto.VenteRequest;
@@ -163,6 +164,19 @@ class ReportingModuleIntegrationTest {
         String token = jetonAdmin();
         mockMvc.perform(get("/api/reporting/previsions").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @Order(6)
+    void leResumeIaDegradeGracieusementSansCleApiConfiguree() throws Exception {
+        String token = jetonAdmin();
+        String reponse = mockMvc.perform(get("/api/reporting/resume-ia")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        ResumeIaDto resume = objectMapper.readValue(reponse, ResumeIaDto.class);
+        assertThat(resume.disponible()).isFalse();
+        assertThat(resume.texte()).isNotBlank();
     }
 
     @Test

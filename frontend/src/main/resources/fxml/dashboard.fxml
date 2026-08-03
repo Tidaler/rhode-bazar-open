@@ -30,8 +30,8 @@
                 <Button text="%dashboard.module.stock" styleClass="bouton-principal" onAction="#ouvrirStock"/>
                 <Button text="%dashboard.module.ventes" styleClass="bouton-principal" onAction="#ouvrirVentes"/>
                 <Button fx:id="boutonDepenses" text="%dashboard.module.depenses" styleClass="bouton-principal" onAction="#ouvrirDepenses"/>
+                <Button fx:id="boutonReporting" text="%dashboard.module.reporting" styleClass="bouton-principal" onAction="#ouvrirReporting"/>
             </HBox>
-            <Label text="Le module Reporting sera ajouté ici." wrapText="true" style="-fx-text-fill: gray;"/>
         </VBox>
     </center>
 

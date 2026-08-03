@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.rhodebazar.frontend.controller.ReportingController"
+            prefWidth="1200" prefHeight="780">
+
+    <top>
+        <VBox>
+            <HBox alignment="CENTER_LEFT" spacing="12" styleClass="barre-application">
+                <Button text="%reporting.retour" styleClass="bouton-lien" onAction="#retourTableauDeBord"/>
+                <Label text="%reporting.title" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <padding>
+                    <Insets top="12" right="20" bottom="12" left="20"/>
+                </padding>
+                <Label text="%reporting.debut"/>
+                <DatePicker fx:id="champDebut" prefWidth="150"/>
+                <Label text="%reporting.fin"/>
+                <DatePicker fx:id="champFin" prefWidth="150"/>
+                <Button text="%reporting.actualiser" styleClass="bouton-principal" onAction="#actualiser"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox spacing="20">
+                <padding>
+                    <Insets top="10" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <HBox spacing="16">
+                    <VBox styleClass="tuile-kpi" HBox.hgrow="ALWAYS" alignment="CENTER">
+                        <Label text="%reporting.kpi.ca" styleClass="tuile-kpi-titre"/>
+                        <Label fx:id="labelCa" styleClass="tuile-kpi-valeur"/>
+                    </VBox>
+                    <VBox styleClass="tuile-kpi" HBox.hgrow="ALWAYS" alignment="CENTER">
+                        <Label text="%reporting.kpi.marge" styleClass="tuile-kpi-titre"/>
+                        <Label fx:id="labelMarge" styleClass="tuile-kpi-valeur"/>
+                    </VBox>
+                    <VBox styleClass="tuile-kpi" HBox.hgrow="ALWAYS" alignment="CENTER">
+                        <Label text="%reporting.kpi.depenses" styleClass="tuile-kpi-titre"/>
+                        <Label fx:id="labelDepenses" styleClass="tuile-kpi-valeur"/>
+                    </VBox>
+                    <VBox styleClass="tuile-kpi" HBox.hgrow="ALWAYS" alignment="CENTER">
+                        <Label text="%reporting.kpi.benefice" styleClass="tuile-kpi-titre"/>
+                        <Label fx:id="labelBenefice" styleClass="tuile-kpi-valeur"/>
+                    </VBox>
+                </HBox>
+
+                <LineChart fx:id="graphiqueVentes" title="%reporting.chart.ventesParJour" animated="false" prefHeight="260" legendVisible="false">
+                    <xAxis>
+                        <CategoryAxis fx:id="axeDates" label=""/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis fx:id="axeMontants" label=""/>
+                    </yAxis>
+                </LineChart>
+
+                <HBox spacing="16">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="%reporting.produitsPlusVendus" styleClass="titre-ecran"/>
+                        <TableView fx:id="tablePlusVendus" prefHeight="200">
+                            <columns>
+                                <TableColumn fx:id="colonnePlusVenduNom" text="%reporting.produit.col.nom" prefWidth="160"/>
+                                <TableColumn fx:id="colonnePlusVenduQuantite" text="%reporting.produit.col.quantite" prefWidth="90"/>
+                                <TableColumn fx:id="colonnePlusVenduMontant" text="%reporting.produit.col.montant" prefWidth="110"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="%reporting.produitsMoinsVendus" styleClass="titre-ecran"/>
+                        <TableView fx:id="tableMoinsVendus" prefHeight="200">
+                            <columns>
+                                <TableColumn fx:id="colonneMoinsVenduNom" text="%reporting.produit.col.nom" prefWidth="160"/>
+                                <TableColumn fx:id="colonneMoinsVenduQuantite" text="%reporting.produit.col.quantite" prefWidth="90"/>
+                                <TableColumn fx:id="colonneMoinsVenduMontant" text="%reporting.produit.col.montant" prefWidth="110"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </HBox>
+
+                <VBox spacing="6">
+                    <Label text="%reporting.depensesParCategorie" styleClass="titre-ecran"/>
+                    <TableView fx:id="tableDepensesCategorie" prefHeight="150">
+                        <columns>
+                            <TableColumn fx:id="colonneDepenseCategorie" text="%reporting.depense.col.categorie" prefWidth="200"/>
+                            <TableColumn fx:id="colonneDepenseTotal" text="%reporting.depense.col.total" prefWidth="150"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+
+                <VBox spacing="6" styleClass="tuile-kpi">
+                    <Label text="%reporting.prevision.titre" styleClass="titre-ecran"/>
+                    <HBox spacing="20">
+                        <Label fx:id="labelMoyenneJournaliere"/>
+                        <Label fx:id="labelPrevision7Jours"/>
+                        <Label fx:id="labelTendance"/>
+                    </HBox>
+                </VBox>
+
+                <VBox spacing="6">
+                    <Label text="%reporting.reappro.titre" styleClass="titre-ecran"/>
+                    <TableView fx:id="tableReappro" prefHeight="200">
+                        <columns>
+                            <TableColumn fx:id="colonneReapproProduit" text="%reporting.reappro.col.produit" prefWidth="160"/>
+                            <TableColumn fx:id="colonneReapproStock" text="%reporting.reappro.col.stock" prefWidth="100"/>
+                            <TableColumn fx:id="colonneReapproVitesse" text="%reporting.reappro.col.vitesse" prefWidth="100"/>
+                            <TableColumn fx:id="colonneReapproCouverture" text="%reporting.reappro.col.couverture" prefWidth="130"/>
+                            <TableColumn fx:id="colonneReapproQuantite" text="%reporting.reappro.col.quantite" prefWidth="140"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+
+                <VBox spacing="6">
+                    <Label text="%reporting.anomalies.titre" styleClass="titre-ecran"/>
+                    <TableView fx:id="tableAnomalies" prefHeight="180">
+                        <columns>
+                            <TableColumn fx:id="colonneAnomalieType" text="%reporting.anomalie.col.type" prefWidth="90"/>
+                            <TableColumn fx:id="colonneAnomalieDescription" text="%reporting.anomalie.col.description" prefWidth="300"/>
+                            <TableColumn fx:id="colonneAnomalieValeur" text="%reporting.anomalie.col.valeur" prefWidth="110"/>
+                            <TableColumn fx:id="colonneAnomalieMoyenne" text="%reporting.anomalie.col.moyenne" prefWidth="130"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+
+                <VBox spacing="10" styleClass="tuile-kpi">
+                    <Label text="%reporting.resume.titre" styleClass="titre-ecran"/>
+                    <Label fx:id="labelResumeLocal" wrapText="true"/>
+                    <Button text="%reporting.resume.genererIa" styleClass="bouton-principal" onAction="#genererResumeIa"/>
+                    <Label fx:id="labelResumeIaTitre" text="%reporting.resume.ia.titre" style="-fx-font-weight: bold;" visible="false" managed="false"/>
+                    <Label fx:id="labelResumeIa" wrapText="true"/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

@@ -1,9 +1,11 @@
 package com.rhodebazar.backend.web;
 
+import com.rhodebazar.backend.service.AiInsightService;
 import com.rhodebazar.backend.service.AnalyseLocaleService;
 import com.rhodebazar.backend.service.ReportingService;
 import com.rhodebazar.backend.web.dto.AnomalieDto;
 import com.rhodebazar.backend.web.dto.PrevisionVentesDto;
+import com.rhodebazar.backend.web.dto.ResumeIaDto;
 import com.rhodebazar.backend.web.dto.SuggestionReapprovisionnementDto;
 import com.rhodebazar.backend.web.dto.TableauDeBordDto;
 import java.time.LocalDate;
@@ -23,10 +25,15 @@ public class ReportingController {
 
     private final ReportingService reportingService;
     private final AnalyseLocaleService analyseLocaleService;
+    private final AiInsightService aiInsightService;
 
-    public ReportingController(ReportingService reportingService, AnalyseLocaleService analyseLocaleService) {
+    public ReportingController(
+            ReportingService reportingService,
+            AnalyseLocaleService analyseLocaleService,
+            AiInsightService aiInsightService) {
         this.reportingService = reportingService;
         this.analyseLocaleService = analyseLocaleService;
+        this.aiInsightService = aiInsightService;
     }
 
     @GetMapping("/dashboard")
@@ -51,5 +58,16 @@ public class ReportingController {
     @GetMapping("/anomalies")
     public List<AnomalieDto> anomalies() {
         return analyseLocaleService.detecterAnomaliesDepenses();
+    }
+
+    @GetMapping("/resume-ia")
+    public ResumeIaDto resumeIa(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate debut,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin) {
+        LocalDate finEffective = fin != null ? fin : LocalDate.now();
+        LocalDate debutEffectif = debut != null ? debut : finEffective.minusDays(29);
+        TableauDeBordDto tableau = reportingService.calculerTableauDeBord(debutEffectif, finEffective);
+        PrevisionVentesDto prevision = analyseLocaleService.prevoirVentes();
+        return aiInsightService.genererResume(tableau, prevision);
     }
 }

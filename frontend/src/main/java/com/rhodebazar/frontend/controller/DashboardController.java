@@ -20,6 +20,9 @@ public class DashboardController {
     private Button boutonDepenses;
 
     @FXML
+    private Button boutonReporting;
+
+    @FXML
     private void initialize() {
         var utilisateur = Session.getUtilisateurConnecte();
         var messages = MessagesService.bundle();
@@ -30,6 +33,8 @@ public class DashboardController {
             boolean estAdmin = "ADMIN".equals(utilisateur.role());
             boutonDepenses.setVisible(estAdmin);
             boutonDepenses.setManaged(estAdmin);
+            boutonReporting.setVisible(estAdmin);
+            boutonReporting.setManaged(estAdmin);
         }
     }
 
@@ -52,5 +57,10 @@ public class DashboardController {
     @FXML
     private void ouvrirDepenses() {
         SceneManager.afficherEcranDepenses();
+    }
+
+    @FXML
+    private void ouvrirReporting() {
+        SceneManager.afficherEcranReporting();
     }
 }

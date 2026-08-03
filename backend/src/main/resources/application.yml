@@ -20,6 +20,11 @@ rhodebazar:
   jwt:
     secret: ${RHODEBAZAR_JWT_SECRET:changez-moi-en-production-cle-secrete-locale-rhode-bazar}
     expiration-minutes: 480
+  ai:
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY:}
+      model: ${RHODEBAZAR_AI_MODEL:claude-opus-5}
+      max-tokens: ${RHODEBAZAR_AI_MAX_TOKENS:1024}
 
 ---
 spring:

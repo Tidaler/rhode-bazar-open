@@ -33,6 +33,9 @@ services:
       RHODEBAZAR_DB_PASSWORD: ${RHODEBAZAR_DB_PASSWORD:-rhodebazar}
       RHODEBAZAR_JWT_SECRET: ${RHODEBAZAR_JWT_SECRET:?definir un secret JWT dans .env}
       RHODEBAZAR_ADMIN_PASSWORD: ${RHODEBAZAR_ADMIN_PASSWORD:?definir le mot de passe admin initial dans .env}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      RHODEBAZAR_AI_MODEL: ${RHODEBAZAR_AI_MODEL:-claude-opus-5}
+      RHODEBAZAR_AI_MAX_TOKENS: ${RHODEBAZAR_AI_MAX_TOKENS:-1024}
     ports:
       - "8085:8085"
 

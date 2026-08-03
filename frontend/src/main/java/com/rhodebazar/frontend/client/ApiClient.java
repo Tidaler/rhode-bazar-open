@@ -8,6 +8,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -90,6 +91,43 @@ public class ApiClient {
     public List<DepenseDto> listerDepenses(String token, CategorieDepense categorie) throws ApiException {
         String chemin = categorie != null ? "/api/depenses?categorie=" + categorie.name() : "/api/depenses";
         return versListe(get(chemin, token, DepenseDto[].class));
+    }
+
+    public TableauDeBordDto obtenirTableauDeBord(String token, LocalDate debut, LocalDate fin) throws ApiException {
+        return get("/api/reporting/dashboard" + periode(debut, fin), token, TableauDeBordDto.class);
+    }
+
+    public PrevisionVentesDto obtenirPrevisions(String token) throws ApiException {
+        return get("/api/reporting/previsions", token, PrevisionVentesDto.class);
+    }
+
+    public List<SuggestionReapprovisionnementDto> obtenirReapprovisionnement(String token) throws ApiException {
+        return versListe(get("/api/reporting/reapprovisionnement", token, SuggestionReapprovisionnementDto[].class));
+    }
+
+    public List<AnomalieDto> obtenirAnomalies(String token) throws ApiException {
+        return versListe(get("/api/reporting/anomalies", token, AnomalieDto[].class));
+    }
+
+    public ResumeIaDto obtenirResumeIa(String token, LocalDate debut, LocalDate fin) throws ApiException {
+        return get("/api/reporting/resume-ia" + periode(debut, fin), token, ResumeIaDto.class);
+    }
+
+    private String periode(LocalDate debut, LocalDate fin) {
+        if (debut == null && fin == null) {
+            return "";
+        }
+        StringBuilder query = new StringBuilder("?");
+        if (debut != null) {
+            query.append("debut=").append(debut);
+        }
+        if (fin != null) {
+            if (debut != null) {
+                query.append("&");
+            }
+            query.append("fin=").append(fin);
+        }
+        return query.toString();
     }
 
     private <T> List<T> versListe(T[] tableau) {
