@@ -10,4 +10,6 @@ public interface StockProduitDepotRepository extends JpaRepository<StockProduitD
     List<StockProduitDepot> findByProduitId(Long produitId);
 
     List<StockProduitDepot> findByQuantiteLessThanEqual(int seuil);
+
+    boolean existsByDepotId(Long depotId);
 }

@@ -21,12 +21,13 @@
     </top>
 
     <center>
-        <VBox alignment="CENTER" spacing="10">
+        <VBox alignment="CENTER" spacing="16">
             <padding>
                 <Insets top="40" right="40" bottom="40" left="40"/>
             </padding>
             <Label fx:id="labelRole" styleClass="titre-ecran"/>
-            <Label text="Les modules Stock, Ventes, Dépenses et Reporting seront ajoutés ici." wrapText="true" style="-fx-text-fill: gray;"/>
+            <Button text="%dashboard.module.stock" styleClass="bouton-principal" onAction="#ouvrirStock"/>
+            <Label text="Les modules Ventes, Dépenses et Reporting seront ajoutés ici." wrapText="true" style="-fx-text-fill: gray;"/>
         </VBox>
     </center>
 

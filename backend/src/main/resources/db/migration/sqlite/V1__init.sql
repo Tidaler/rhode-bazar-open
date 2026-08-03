@@ -7,7 +7,7 @@ CREATE TABLE utilisateurs (
     mot_de_passe    TEXT NOT NULL,
     role            TEXT NOT NULL CHECK (role IN ('ADMIN', 'VENDEUR')),
     actif           INTEGER NOT NULL DEFAULT 1,
-    date_creation   TEXT NOT NULL DEFAULT (datetime('now'))
+    date_creation   TEXT NOT NULL
 );
 
 CREATE TABLE depots (
@@ -33,7 +33,7 @@ CREATE TABLE produits (
     stock_minimal   INTEGER NOT NULL DEFAULT 0,
     unite           TEXT NOT NULL DEFAULT 'unite',
     actif           INTEGER NOT NULL DEFAULT 1,
-    date_creation   TEXT NOT NULL DEFAULT (datetime('now'))
+    date_creation   TEXT NOT NULL
 );
 
 CREATE TABLE stock_produit_depot (
@@ -51,13 +51,13 @@ CREATE TABLE mouvements_stock (
     quantite        INTEGER NOT NULL,
     motif           TEXT,
     utilisateur_id  INTEGER REFERENCES utilisateurs(id),
-    date_mouvement  TEXT NOT NULL DEFAULT (datetime('now'))
+    date_mouvement  TEXT NOT NULL
 );
 
 CREATE TABLE ventes (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     numero          TEXT NOT NULL UNIQUE,
-    date_vente      TEXT NOT NULL DEFAULT (datetime('now')),
+    date_vente      TEXT NOT NULL,
     utilisateur_id  INTEGER NOT NULL REFERENCES utilisateurs(id),
     depot_id        INTEGER NOT NULL REFERENCES depots(id),
     mode_paiement   TEXT NOT NULL CHECK (mode_paiement IN ('ESPECES', 'CARTE', 'MOBILE_MONEY', 'VIREMENT', 'AUTRE')),
@@ -79,7 +79,7 @@ CREATE TABLE depenses (
     categorie       TEXT NOT NULL CHECK (categorie IN ('FOURNISSEUR', 'CHARGE_FIXE', 'DIVERS')),
     libelle         TEXT NOT NULL,
     montant         NUMERIC NOT NULL,
-    date_depense    TEXT NOT NULL DEFAULT (datetime('now')),
+    date_depense    TEXT NOT NULL,
     utilisateur_id  INTEGER REFERENCES utilisateurs(id)
 );
 
@@ -90,7 +90,7 @@ CREATE TABLE journal_audit (
     entite          TEXT NOT NULL,
     entite_id       INTEGER,
     details         TEXT,
-    date_action     TEXT NOT NULL DEFAULT (datetime('now'))
+    date_action     TEXT NOT NULL
 );
 
 CREATE INDEX idx_produits_categorie ON produits(categorie_id);

@@ -7,7 +7,7 @@ CREATE TABLE utilisateurs (
     mot_de_passe    VARCHAR(255) NOT NULL,
     role            ENUM('ADMIN', 'VENDEUR') NOT NULL,
     actif           BOOLEAN NOT NULL DEFAULT TRUE,
-    date_creation   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    date_creation   VARCHAR(35) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE depots (
@@ -33,7 +33,7 @@ CREATE TABLE produits (
     stock_minimal   INT NOT NULL DEFAULT 0,
     unite           VARCHAR(30) NOT NULL DEFAULT 'unite',
     actif           BOOLEAN NOT NULL DEFAULT TRUE,
-    date_creation   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    date_creation   VARCHAR(35) NOT NULL,
     CONSTRAINT fk_produits_categorie FOREIGN KEY (categorie_id) REFERENCES categories(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -54,7 +54,7 @@ CREATE TABLE mouvements_stock (
     quantite        INT NOT NULL,
     motif           VARCHAR(500),
     utilisateur_id  BIGINT,
-    date_mouvement  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    date_mouvement  VARCHAR(35) NOT NULL,
     CONSTRAINT fk_mouv_produit FOREIGN KEY (produit_id) REFERENCES produits(id),
     CONSTRAINT fk_mouv_depot FOREIGN KEY (depot_id) REFERENCES depots(id),
     CONSTRAINT fk_mouv_utilisateur FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id)
@@ -63,7 +63,7 @@ CREATE TABLE mouvements_stock (
 CREATE TABLE ventes (
     id              BIGINT AUTO_INCREMENT PRIMARY KEY,
     numero          VARCHAR(50) NOT NULL UNIQUE,
-    date_vente      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    date_vente      VARCHAR(35) NOT NULL,
     utilisateur_id  BIGINT NOT NULL,
     depot_id        BIGINT NOT NULL,
     mode_paiement   ENUM('ESPECES', 'CARTE', 'MOBILE_MONEY', 'VIREMENT', 'AUTRE') NOT NULL,
@@ -89,7 +89,7 @@ CREATE TABLE depenses (
     categorie       ENUM('FOURNISSEUR', 'CHARGE_FIXE', 'DIVERS') NOT NULL,
     libelle         VARCHAR(255) NOT NULL,
     montant         DECIMAL(12,2) NOT NULL,
-    date_depense    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    date_depense    VARCHAR(35) NOT NULL,
     utilisateur_id  BIGINT,
     CONSTRAINT fk_depenses_utilisateur FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -101,7 +101,7 @@ CREATE TABLE journal_audit (
     entite          VARCHAR(100) NOT NULL,
     entite_id       BIGINT,
     details         VARCHAR(1000),
-    date_action     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    date_action     VARCHAR(35) NOT NULL,
     CONSTRAINT fk_audit_utilisateur FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

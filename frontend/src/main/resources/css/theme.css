@@ -94,3 +94,12 @@
 .barre-application .label {
     -fx-text-fill: -color-blanc;
 }
+
+.ligne-alerte {
+    -fx-background-color: derive(-color-erreur, 85%);
+}
+
+.ligne-alerte .table-cell {
+    -fx-text-fill: -color-erreur;
+    -fx-font-weight: bold;
+}

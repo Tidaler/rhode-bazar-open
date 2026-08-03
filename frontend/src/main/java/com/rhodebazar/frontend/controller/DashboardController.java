@@ -30,4 +30,9 @@ public class DashboardController {
         Session.terminer();
         SceneManager.afficherEcranConnexion();
     }
+
+    @FXML
+    private void ouvrirStock() {
+        SceneManager.afficherEcranStock();
+    }
 }

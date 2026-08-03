@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ProduitRepository extends JpaRepository<Produit, Long> {
 
     List<Produit> findByActifTrue();
+
+    boolean existsByCategorieId(Long categorieId);
 }
