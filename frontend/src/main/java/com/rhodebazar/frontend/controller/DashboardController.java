@@ -5,6 +5,7 @@ import com.rhodebazar.frontend.SceneManager;
 import com.rhodebazar.frontend.i18n.MessagesService;
 import java.text.MessageFormat;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 public class DashboardController {
@@ -16,12 +17,19 @@ public class DashboardController {
     private Label labelRole;
 
     @FXML
+    private Button boutonDepenses;
+
+    @FXML
     private void initialize() {
         var utilisateur = Session.getUtilisateurConnecte();
         var messages = MessagesService.bundle();
         if (utilisateur != null) {
             labelBienvenue.setText(MessageFormat.format(messages.getString("dashboard.bienvenue"), utilisateur.nom()));
             labelRole.setText(MessageFormat.format(messages.getString("dashboard.role"), utilisateur.role()));
+
+            boolean estAdmin = "ADMIN".equals(utilisateur.role());
+            boutonDepenses.setVisible(estAdmin);
+            boutonDepenses.setManaged(estAdmin);
         }
     }
 
@@ -39,5 +47,10 @@ public class DashboardController {
     @FXML
     private void ouvrirVentes() {
         SceneManager.afficherEcranVentes();
+    }
+
+    @FXML
+    private void ouvrirDepenses() {
+        SceneManager.afficherEcranDepenses();
     }
 }

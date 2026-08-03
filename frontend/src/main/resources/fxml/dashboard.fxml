@@ -29,8 +29,9 @@
             <HBox alignment="CENTER" spacing="12">
                 <Button text="%dashboard.module.stock" styleClass="bouton-principal" onAction="#ouvrirStock"/>
                 <Button text="%dashboard.module.ventes" styleClass="bouton-principal" onAction="#ouvrirVentes"/>
+                <Button fx:id="boutonDepenses" text="%dashboard.module.depenses" styleClass="bouton-principal" onAction="#ouvrirDepenses"/>
             </HBox>
-            <Label text="Les modules Dépenses et Reporting seront ajoutés ici." wrapText="true" style="-fx-text-fill: gray;"/>
+            <Label text="Le module Reporting sera ajouté ici." wrapText="true" style="-fx-text-fill: gray;"/>
         </VBox>
     </center>
 

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.rhodebazar.frontend.controller.DepenseController"
+            prefWidth="900" prefHeight="640">
+
+    <top>
+        <VBox>
+            <HBox alignment="CENTER_LEFT" spacing="12" styleClass="barre-application">
+                <Button text="%depense.retour" styleClass="bouton-lien" onAction="#retourTableauDeBord"/>
+                <Label text="%depense.title" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <padding>
+                    <Insets top="12" right="20" bottom="12" left="20"/>
+                </padding>
+                <Label text="%depense.categorie"/>
+                <ComboBox fx:id="champCategorie" prefWidth="150"/>
+                <Label text="%depense.libelle"/>
+                <TextField fx:id="champLibelle" prefWidth="220"/>
+                <Label text="%depense.montant"/>
+                <TextField fx:id="champMontant" prefWidth="100"/>
+                <Button text="%depense.enregistrer" styleClass="bouton-principal" onAction="#enregistrerDepense"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <padding>
+                    <Insets top="0" right="20" bottom="12" left="20"/>
+                </padding>
+                <Label text="%depense.filtrer"/>
+                <ComboBox fx:id="champFiltre" prefWidth="180"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <TableView fx:id="tableDepenses">
+            <columns>
+                <TableColumn fx:id="colonneCategorie" text="%depense.historique.categorie" prefWidth="130"/>
+                <TableColumn fx:id="colonneLibelle" text="%depense.historique.libelle" prefWidth="250"/>
+                <TableColumn fx:id="colonneMontant" text="%depense.historique.montant" prefWidth="120"/>
+                <TableColumn fx:id="colonneDate" text="%depense.historique.date" prefWidth="160"/>
+                <TableColumn fx:id="colonneUtilisateur" text="%depense.historique.utilisateur" prefWidth="150"/>
+            </columns>
+        </TableView>
+    </center>
+
+</BorderPane>

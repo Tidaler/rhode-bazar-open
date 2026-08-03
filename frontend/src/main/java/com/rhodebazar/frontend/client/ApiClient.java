@@ -83,6 +83,15 @@ public class ApiClient {
         return versListe(get("/api/ventes", token, VenteDto[].class));
     }
 
+    public DepenseDto creerDepense(DepenseRequest requete, String token) throws ApiException {
+        return envoyerAvecCorps("POST", "/api/depenses", requete, token, DepenseDto.class, 201);
+    }
+
+    public List<DepenseDto> listerDepenses(String token, CategorieDepense categorie) throws ApiException {
+        String chemin = categorie != null ? "/api/depenses?categorie=" + categorie.name() : "/api/depenses";
+        return versListe(get(chemin, token, DepenseDto[].class));
+    }
+
     private <T> List<T> versListe(T[] tableau) {
         return new ArrayList<>(Arrays.asList(tableau));
     }
