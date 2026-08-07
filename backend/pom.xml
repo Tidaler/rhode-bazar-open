@@ -15,7 +15,7 @@
     <artifactId>rhode-bazar-backend</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <name>rhode-bazar-backend</name>
-    <description>Backend Spring Boot de l'application Rhode Bazar</description>
+    <description>Backend Spring Boot de l'application ManagEx</description>
 
     <properties>
         <java.version>21</java.version>

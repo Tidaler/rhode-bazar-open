@@ -1,7 +1,6 @@
 package com.rhodebazar.frontend.controller;
 
 import com.rhodebazar.frontend.Session;
-import com.rhodebazar.frontend.SceneManager;
 import com.rhodebazar.frontend.client.ApiClient;
 import com.rhodebazar.frontend.client.ApiException;
 import com.rhodebazar.frontend.client.DepotDto;
@@ -87,6 +86,9 @@ public class VenteController {
     @FXML
     private TableColumn<VenteDto, String> colonneHistoriqueMontant;
 
+    @FXML
+    private BarreNavigationController barreNavigationController;
+
     private final ApiClient apiClient = new ApiClient();
     private final ObservableList<LignePanier> panier = FXCollections.observableArrayList();
 
@@ -144,12 +146,10 @@ public class VenteController {
         colonneHistoriqueMontant.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().montantTotal().toPlainString()));
 
         mettreAJourTotal();
+        if (barreNavigationController != null) {
+            barreNavigationController.marquerActif("VENTES");
+        }
         chargerDonnees();
-    }
-
-    @FXML
-    private void retourTableauDeBord() {
-        SceneManager.afficherEcranTableauDeBord();
     }
 
     private void chargerDonnees() {

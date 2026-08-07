@@ -9,8 +9,8 @@
     <version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Rhode Bazar</name>
-    <description>Application de gestion (stock, ventes, depenses, reporting) pour la boutique Rhode Bazar</description>
+    <name>ManagEx</name>
+    <description>ManagEx - application de gestion (stock, ventes, depenses, reporting), deployee ici pour la boutique Rhode Bazar</description>
 
     <modules>
         <module>backend</module>

@@ -1,7 +1,6 @@
 package com.rhodebazar.frontend.controller;
 
 import com.rhodebazar.frontend.Session;
-import com.rhodebazar.frontend.SceneManager;
 import com.rhodebazar.frontend.client.AnomalieDto;
 import com.rhodebazar.frontend.client.ApiClient;
 import com.rhodebazar.frontend.client.ApiException;
@@ -123,6 +122,9 @@ public class ReportingController {
     @FXML
     private Label labelResumeIa;
 
+    @FXML
+    private BarreNavigationController barreNavigationController;
+
     private final ApiClient apiClient = new ApiClient();
 
     @FXML
@@ -157,12 +159,11 @@ public class ReportingController {
 
         labelResumeIa.setText("");
 
-        actualiser();
-    }
+        if (barreNavigationController != null) {
+            barreNavigationController.marquerActif("REPORTING");
+        }
 
-    @FXML
-    private void retourTableauDeBord() {
-        SceneManager.afficherEcranTableauDeBord();
+        actualiser();
     }
 
     @FXML

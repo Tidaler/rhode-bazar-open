@@ -1,7 +1,6 @@
 package com.rhodebazar.frontend.controller;
 
 import com.rhodebazar.frontend.Session;
-import com.rhodebazar.frontend.SceneManager;
 import com.rhodebazar.frontend.client.ApiClient;
 import com.rhodebazar.frontend.client.ApiException;
 import com.rhodebazar.frontend.client.CategorieDepense;
@@ -56,6 +55,9 @@ public class DepenseController {
     @FXML
     private TableColumn<DepenseDto, String> colonneUtilisateur;
 
+    @FXML
+    private BarreNavigationController barreNavigationController;
+
     private final ApiClient apiClient = new ApiClient();
 
     @FXML
@@ -102,12 +104,11 @@ public class DepenseController {
         colonneUtilisateur.setCellValueFactory(d -> new SimpleStringProperty(
                 d.getValue().utilisateurNom() != null ? d.getValue().utilisateurNom() : ""));
 
-        chargerDepenses();
-    }
+        if (barreNavigationController != null) {
+            barreNavigationController.marquerActif("DEPENSES");
+        }
 
-    @FXML
-    private void retourTableauDeBord() {
-        SceneManager.afficherEcranTableauDeBord();
+        chargerDepenses();
     }
 
     private void chargerDepenses() {

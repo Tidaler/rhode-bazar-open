@@ -52,7 +52,7 @@ public final class SceneManager {
             scene.getStylesheets().add(
                     Objects.requireNonNull(SceneManager.class.getResource("/css/theme.css")).toExternalForm());
 
-            stagePrincipal.setTitle("Rhode Bazar - " + titre);
+            stagePrincipal.setTitle("ManagEx - " + titre);
             stagePrincipal.setScene(scene);
             stagePrincipal.show();
         } catch (IOException e) {

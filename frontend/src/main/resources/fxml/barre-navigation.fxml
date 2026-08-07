@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.rhodebazar.frontend.controller.BarreNavigationController"
+      alignment="CENTER_LEFT" spacing="4" styleClass="barre-application">
+    <padding>
+        <Insets top="10" right="20" bottom="10" left="20"/>
+    </padding>
+
+    <Label text="%app.title" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    <Region prefWidth="24"/>
+    <Button fx:id="boutonTableauDeBord" text="%dashboard.title" styleClass="bouton-lien" onAction="#ouvrirTableauDeBord"/>
+    <Button fx:id="boutonStock" text="%dashboard.module.stock" styleClass="bouton-lien" onAction="#ouvrirStock"/>
+    <Button fx:id="boutonVentes" text="%dashboard.module.ventes" styleClass="bouton-lien" onAction="#ouvrirVentes"/>
+    <Button fx:id="boutonDepenses" text="%dashboard.module.depenses" styleClass="bouton-lien" onAction="#ouvrirDepenses"/>
+    <Button fx:id="boutonReporting" text="%dashboard.module.reporting" styleClass="bouton-lien" onAction="#ouvrirReporting"/>
+    <Region HBox.hgrow="ALWAYS"/>
+    <Label fx:id="labelUtilisateur"/>
+    <Button text="%dashboard.deconnexion" styleClass="bouton-lien" onAction="#seDeconnecter"/>
+</HBox>

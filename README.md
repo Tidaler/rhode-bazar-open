@@ -1,4 +1,6 @@
-# Rhode Bazar — Application de Gestion
+# ManagEx — Application de Gestion
+
+*Déployée ici pour la boutique Rhode Bazar.*
 
 Application desktop native pour la gestion d'une boutique de vente d'articles de décoration : stock, ventes, dépenses, facturation et reporting.
 
@@ -59,4 +61,4 @@ L'interface est en français par défaut, avec une option de bascule vers l'angl
 
 ---
 
-*Rhode Bazar — projet privé.*
+*ManagEx — projet privé.*

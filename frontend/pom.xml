@@ -9,7 +9,7 @@
     <version>0.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>rhode-bazar-frontend</name>
-    <description>Client desktop JavaFX de l'application Rhode Bazar</description>
+    <description>Client desktop JavaFX de l'application ManagEx</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

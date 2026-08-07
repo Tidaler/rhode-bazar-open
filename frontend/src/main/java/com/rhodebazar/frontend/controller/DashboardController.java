@@ -23,6 +23,9 @@ public class DashboardController {
     private Button boutonReporting;
 
     @FXML
+    private BarreNavigationController barreNavigationController;
+
+    @FXML
     private void initialize() {
         var utilisateur = Session.getUtilisateurConnecte();
         var messages = MessagesService.bundle();
@@ -36,12 +39,9 @@ public class DashboardController {
             boutonReporting.setVisible(estAdmin);
             boutonReporting.setManaged(estAdmin);
         }
-    }
-
-    @FXML
-    private void seDeconnecter() {
-        Session.terminer();
-        SceneManager.afficherEcranConnexion();
+        if (barreNavigationController != null) {
+            barreNavigationController.marquerActif("DASHBOARD");
+        }
     }
 
     @FXML

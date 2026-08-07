@@ -1,7 +1,6 @@
 package com.rhodebazar.frontend.controller;
 
 import com.rhodebazar.frontend.Session;
-import com.rhodebazar.frontend.SceneManager;
 import com.rhodebazar.frontend.client.ApiClient;
 import com.rhodebazar.frontend.client.ApiException;
 import com.rhodebazar.frontend.client.CategorieDto;
@@ -64,6 +63,9 @@ public class StockController {
     @FXML
     private TextField champScanner;
 
+    @FXML
+    private BarreNavigationController barreNavigationController;
+
     private final ApiClient apiClient = new ApiClient();
     private final ObservableList<ProduitDto> produits = FXCollections.observableArrayList();
     private List<CategorieDto> categories = List.of();
@@ -96,12 +98,11 @@ public class StockController {
             boutonMouvement.setDisable(!selectionne);
         });
 
-        actualiser();
-    }
+        if (barreNavigationController != null) {
+            barreNavigationController.marquerActif("STOCK");
+        }
 
-    @FXML
-    private void retourTableauDeBord() {
-        SceneManager.afficherEcranTableauDeBord();
+        actualiser();
     }
 
     @FXML
