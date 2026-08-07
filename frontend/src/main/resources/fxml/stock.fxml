@@ -29,10 +29,12 @@
                 <padding>
                     <Insets top="12" right="20" bottom="12" left="20"/>
                 </padding>
-                <Button text="%stock.nouveauProduit" styleClass="bouton-principal" onAction="#nouveauProduit"/>
+                <Button fx:id="boutonNouveauProduit" text="%stock.nouveauProduit" styleClass="bouton-principal" onAction="#nouveauProduit"/>
                 <Button fx:id="boutonModifier" text="%stock.modifierProduit" styleClass="bouton-principal" onAction="#modifierProduit" disable="true"/>
                 <Button fx:id="boutonMouvement" text="%stock.enregistrerMouvement" styleClass="bouton-principal" onAction="#enregistrerMouvement" disable="true"/>
                 <Button text="%stock.actualiser" styleClass="bouton-lien" onAction="#actualiser"/>
+                <Button fx:id="boutonNouvelleCategorie" text="%stock.nouvelleCategorie" styleClass="bouton-lien" onAction="#nouvelleCategorie"/>
+                <Button fx:id="boutonNouveauDepot" text="%stock.nouveauDepot" styleClass="bouton-lien" onAction="#nouveauDepot"/>
             </HBox>
             <HBox spacing="10" alignment="CENTER_LEFT">
                 <padding>

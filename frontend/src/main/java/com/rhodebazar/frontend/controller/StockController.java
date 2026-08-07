@@ -4,7 +4,9 @@ import com.rhodebazar.frontend.Session;
 import com.rhodebazar.frontend.client.ApiClient;
 import com.rhodebazar.frontend.client.ApiException;
 import com.rhodebazar.frontend.client.CategorieDto;
+import com.rhodebazar.frontend.client.CategorieRequest;
 import com.rhodebazar.frontend.client.DepotDto;
+import com.rhodebazar.frontend.client.DepotRequest;
 import com.rhodebazar.frontend.client.MouvementRequest;
 import com.rhodebazar.frontend.client.ProduitDto;
 import com.rhodebazar.frontend.client.ProduitRequest;
@@ -52,6 +54,9 @@ public class StockController {
     private TableColumn<ProduitDto, String> colonneSeuil;
 
     @FXML
+    private Button boutonNouveauProduit;
+
+    @FXML
     private Button boutonModifier;
 
     @FXML
@@ -64,12 +69,19 @@ public class StockController {
     private TextField champScanner;
 
     @FXML
+    private Button boutonNouvelleCategorie;
+
+    @FXML
+    private Button boutonNouveauDepot;
+
+    @FXML
     private BarreNavigationController barreNavigationController;
 
     private final ApiClient apiClient = new ApiClient();
     private final ObservableList<ProduitDto> produits = FXCollections.observableArrayList();
     private List<CategorieDto> categories = List.of();
     private List<DepotDto> depots = List.of();
+    private boolean estAdmin;
 
     @FXML
     private void initialize() {
@@ -94,13 +106,24 @@ public class StockController {
 
         tableProduits.getSelectionModel().selectedItemProperty().addListener((obs, ancien, nouveau) -> {
             boolean selectionne = nouveau != null;
-            boutonModifier.setDisable(!selectionne);
+            boutonModifier.setDisable(!selectionne || !estAdmin);
             boutonMouvement.setDisable(!selectionne);
         });
 
         if (barreNavigationController != null) {
             barreNavigationController.marquerActif("STOCK");
         }
+
+        var utilisateur = Session.getUtilisateurConnecte();
+        estAdmin = utilisateur != null && "ADMIN".equals(utilisateur.role());
+        boutonNouveauProduit.setVisible(estAdmin);
+        boutonNouveauProduit.setManaged(estAdmin);
+        boutonModifier.setVisible(estAdmin);
+        boutonModifier.setManaged(estAdmin);
+        boutonNouvelleCategorie.setVisible(estAdmin);
+        boutonNouvelleCategorie.setManaged(estAdmin);
+        boutonNouveauDepot.setVisible(estAdmin);
+        boutonNouveauDepot.setManaged(estAdmin);
 
         actualiser();
     }
@@ -144,6 +167,18 @@ public class StockController {
         }
         ouvrirDialogueProduit(selection).ifPresent(requete -> executerEtActualiser(
                 () -> apiClient.modifierProduit(selection.id(), requete, jeton())));
+    }
+
+    @FXML
+    private void nouvelleCategorie() {
+        ouvrirDialogueCategorie().ifPresent(requete -> executerEtActualiser(
+                () -> apiClient.creerCategorie(requete, jeton())));
+    }
+
+    @FXML
+    private void nouveauDepot() {
+        ouvrirDialogueDepot().ifPresent(requete -> executerEtActualiser(
+                () -> apiClient.creerDepot(requete, jeton())));
     }
 
     @FXML
@@ -337,6 +372,71 @@ public class StockController {
                     Integer.parseInt(champQuantite.getText().trim()),
                     champMotif.getText());
         });
+
+        return dialogue.showAndWait();
+    }
+
+    private Optional<CategorieRequest> ouvrirDialogueCategorie() {
+        var messages = MessagesService.bundle();
+        Dialog<CategorieRequest> dialogue = new Dialog<>();
+        dialogue.setTitle(messages.getString("categorie.titreAjout"));
+        dialogue.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        dialogue.getDialogPane().getStylesheets().add(
+                getClass().getResource("/css/theme.css").toExternalForm());
+
+        TextField champNom = new TextField();
+        TextArea champDescription = new TextArea();
+        champDescription.setPrefRowCount(2);
+
+        GridPane grille = new GridPane();
+        grille.setHgap(10);
+        grille.setVgap(10);
+        grille.addRow(0, new Label(messages.getString("produit.nom")), champNom);
+        grille.addRow(1, new Label(messages.getString("produit.description")), champDescription);
+        dialogue.getDialogPane().setContent(grille);
+
+        Button boutonOk = (Button) dialogue.getDialogPane().lookupButton(ButtonType.OK);
+        boutonOk.addEventFilter(javafx.event.ActionEvent.ACTION, evenement -> {
+            if (champNom.getText() == null || champNom.getText().isBlank()) {
+                afficherErreur(messages.getString("categorie.nomObligatoire"));
+                evenement.consume();
+            }
+        });
+
+        dialogue.setResultConverter(bouton -> bouton != ButtonType.OK ? null
+                : new CategorieRequest(champNom.getText().trim(), champDescription.getText()));
+
+        return dialogue.showAndWait();
+    }
+
+    private Optional<DepotRequest> ouvrirDialogueDepot() {
+        var messages = MessagesService.bundle();
+        Dialog<DepotRequest> dialogue = new Dialog<>();
+        dialogue.setTitle(messages.getString("depot.titreAjout"));
+        dialogue.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        dialogue.getDialogPane().getStylesheets().add(
+                getClass().getResource("/css/theme.css").toExternalForm());
+
+        TextField champNom = new TextField();
+        TextField champAdresse = new TextField();
+
+        GridPane grille = new GridPane();
+        grille.setHgap(10);
+        grille.setVgap(10);
+        grille.addRow(0, new Label(messages.getString("produit.nom")), champNom);
+        grille.addRow(1, new Label(messages.getString("depot.adresse")), champAdresse);
+        dialogue.getDialogPane().setContent(grille);
+
+        Button boutonOk = (Button) dialogue.getDialogPane().lookupButton(ButtonType.OK);
+        boutonOk.addEventFilter(javafx.event.ActionEvent.ACTION, evenement -> {
+            if (champNom.getText() == null || champNom.getText().isBlank()) {
+                afficherErreur(messages.getString("depot.nomObligatoire"));
+                evenement.consume();
+            }
+        });
+
+        dialogue.setResultConverter(bouton -> bouton != ButtonType.OK ? null
+                : new DepotRequest(champNom.getText().trim(), champAdresse.getText()));
 
         return dialogue.showAndWait();
     }
