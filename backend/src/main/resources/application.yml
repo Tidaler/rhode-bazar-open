@@ -46,7 +46,7 @@ spring:
     activate:
       on-profile: mysql
   datasource:
-    url: jdbc:mysql://${RHODEBAZAR_DB_HOST:localhost}:${RHODEBAZAR_DB_PORT:3306}/${RHODEBAZAR_DB_NAME:rhodebazar}?useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true
+    url: jdbc:mysql://${RHODEBAZAR_DB_HOST:localhost}:${RHODEBAZAR_DB_PORT:3306}/${RHODEBAZAR_DB_NAME:rhodebazar}?useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
     username: ${RHODEBAZAR_DB_USER:rhodebazar}
     password: ${RHODEBAZAR_DB_PASSWORD:rhodebazar}
     driver-class-name: com.mysql.cj.jdbc.Driver
