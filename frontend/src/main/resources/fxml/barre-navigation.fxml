@@ -21,7 +21,9 @@
     <Button fx:id="boutonVentes" text="%dashboard.module.ventes" styleClass="bouton-lien" onAction="#ouvrirVentes"/>
     <Button fx:id="boutonDepenses" text="%dashboard.module.depenses" styleClass="bouton-lien" onAction="#ouvrirDepenses"/>
     <Button fx:id="boutonReporting" text="%dashboard.module.reporting" styleClass="bouton-lien" onAction="#ouvrirReporting"/>
+    <Button fx:id="boutonAdministration" text="%administration.title" styleClass="bouton-lien" onAction="#ouvrirAdministration"/>
     <Region HBox.hgrow="ALWAYS"/>
+    <Button fx:id="boutonMonCompte" text="%compte.title" styleClass="bouton-lien" onAction="#ouvrirMonCompte"/>
     <Label fx:id="labelUtilisateur"/>
     <Button text="%dashboard.deconnexion" styleClass="bouton-lien" onAction="#seDeconnecter"/>
 </HBox>

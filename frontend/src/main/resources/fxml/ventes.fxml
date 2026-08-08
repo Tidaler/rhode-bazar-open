@@ -89,6 +89,8 @@
                         <TableColumn fx:id="colonneHistoriqueMontant" text="%vente.historique.montant" prefWidth="100"/>
                     </columns>
                 </TableView>
+                <Button fx:id="boutonTelechargerFacture" text="%vente.facture.telecharger" styleClass="bouton-lien"
+                        onAction="#telechargerFacture" disable="true"/>
             </VBox>
         </HBox>
     </center>

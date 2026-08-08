@@ -1,8 +1,10 @@
 package com.rhodebazar.backend.stock;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -192,5 +194,70 @@ class StockModuleIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CategorieRequest("Interdit", null))))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Order(6)
+    void modifierCategorieEtDepot() throws Exception {
+        String token = jetonAdmin();
+
+        String reponseCategorie = mockMvc.perform(put("/api/categories/" + categorieId)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new CategorieRequest("Bougies renommees", "Nouvelle description"))))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        assertThat(objectMapper.readValue(reponseCategorie, CategorieDto.class).nom()).isEqualTo("Bougies renommees");
+
+        String reponseDepot = mockMvc.perform(put("/api/depots/" + depotId)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DepotRequest("Entrepot renomme", "Yaounde"))))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        assertThat(objectMapper.readValue(reponseDepot, DepotDto.class).nom()).isEqualTo("Entrepot renomme");
+    }
+
+    @Test
+    @Order(7)
+    void supprimerCategorieOuDepotUtiliseParUnProduitEstRefuse() throws Exception {
+        String token = jetonAdmin();
+
+        mockMvc.perform(delete("/api/categories/" + categorieId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isConflict());
+
+        mockMvc.perform(delete("/api/depots/" + depotId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @Order(8)
+    void supprimerCategorieEtDepotInutilises() throws Exception {
+        String token = jetonAdmin();
+
+        String reponseCategorie = mockMvc.perform(post("/api/categories")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new CategorieRequest("Temporaire", null))))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+        Long categorieTemporaireId = objectMapper.readValue(reponseCategorie, CategorieDto.class).id();
+
+        String reponseDepot = mockMvc.perform(post("/api/depots")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new DepotRequest("Depot temporaire", null))))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+        Long depotTemporaireId = objectMapper.readValue(reponseDepot, DepotDto.class).id();
+
+        mockMvc.perform(delete("/api/categories/" + categorieTemporaireId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
+        mockMvc.perform(delete("/api/depots/" + depotTemporaireId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
     }
 }

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.rhodebazar.frontend.controller.AdministrationController"
+            prefWidth="1000" prefHeight="720">
+
+    <top>
+        <VBox>
+            <fx:include fx:id="barreNavigation" source="barre-navigation.fxml"/>
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <padding>
+                    <Insets top="12" right="20" bottom="12" left="20"/>
+                </padding>
+                <Label text="%administration.title" styleClass="titre-ecran"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox spacing="24">
+                <padding>
+                    <Insets top="10" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <VBox spacing="8">
+                    <Label text="%utilisateurs.titre" styleClass="titre-ecran"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button fx:id="boutonNouvelUtilisateur" text="%utilisateurs.nouveau" styleClass="bouton-principal" onAction="#nouvelUtilisateur"/>
+                        <Button fx:id="boutonModifierUtilisateur" text="%utilisateurs.modifier" styleClass="bouton-lien" onAction="#modifierUtilisateur" disable="true"/>
+                        <Button fx:id="boutonActiverDesactiverUtilisateur" text="%utilisateurs.desactiver" styleClass="bouton-lien" onAction="#activerOuDesactiverUtilisateur" disable="true"/>
+                    </HBox>
+                    <TableView fx:id="tableUtilisateurs" prefHeight="220">
+                        <columns>
+                            <TableColumn fx:id="colonneUtilisateurNom" text="%utilisateurs.nom" prefWidth="200"/>
+                            <TableColumn fx:id="colonneUtilisateurEmail" text="%utilisateurs.email" prefWidth="240"/>
+                            <TableColumn fx:id="colonneUtilisateurRole" text="%utilisateurs.role" prefWidth="150"/>
+                            <TableColumn fx:id="colonneUtilisateurActif" text="%utilisateurs.actif" prefWidth="100"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+
+                <VBox spacing="8">
+                    <Label text="%sauvegarde.titre" styleClass="titre-ecran"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button fx:id="boutonSauvegarder" text="%sauvegarde.declencher" styleClass="bouton-principal" onAction="#declencherSauvegarde"/>
+                    </HBox>
+                    <TableView fx:id="tableSauvegardes" prefHeight="220">
+                        <columns>
+                            <TableColumn fx:id="colonneSauvegardeNom" text="%sauvegarde.nom" prefWidth="280"/>
+                            <TableColumn fx:id="colonneSauvegardeTaille" text="%sauvegarde.taille" prefWidth="120"/>
+                            <TableColumn fx:id="colonneSauvegardeDate" text="%sauvegarde.date" prefWidth="180"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

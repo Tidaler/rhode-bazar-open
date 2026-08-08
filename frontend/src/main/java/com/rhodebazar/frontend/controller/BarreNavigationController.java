@@ -31,6 +31,12 @@ public class BarreNavigationController {
     private Button boutonReporting;
 
     @FXML
+    private Button boutonAdministration;
+
+    @FXML
+    private Button boutonMonCompte;
+
+    @FXML
     private Label labelUtilisateur;
 
     @FXML
@@ -47,6 +53,8 @@ public class BarreNavigationController {
         boutonDepenses.setManaged(estAdmin);
         boutonReporting.setVisible(estAdmin);
         boutonReporting.setManaged(estAdmin);
+        boutonAdministration.setVisible(estAdmin);
+        boutonAdministration.setManaged(estAdmin);
     }
 
     /** Appele par l'ecran hote apres inclusion, pour mettre en evidence l'onglet courant. */
@@ -56,7 +64,9 @@ public class BarreNavigationController {
                 "STOCK", boutonStock,
                 "VENTES", boutonVentes,
                 "DEPENSES", boutonDepenses,
-                "REPORTING", boutonReporting);
+                "REPORTING", boutonReporting,
+                "ADMINISTRATION", boutonAdministration,
+                "MON_COMPTE", boutonMonCompte);
         boutons.values().forEach(b -> b.getStyleClass().remove("bouton-lien-actif"));
         Button actif = boutons.get(cle);
         if (actif != null) {
@@ -87,6 +97,16 @@ public class BarreNavigationController {
     @FXML
     private void ouvrirReporting() {
         SceneManager.afficherEcranReporting();
+    }
+
+    @FXML
+    private void ouvrirAdministration() {
+        SceneManager.afficherEcranAdministration();
+    }
+
+    @FXML
+    private void ouvrirMonCompte() {
+        SceneManager.afficherEcranMonCompte();
     }
 
     @FXML

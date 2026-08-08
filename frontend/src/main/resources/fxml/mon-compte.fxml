@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.rhodebazar.frontend.controller.MonCompteController"
+            prefWidth="700" prefHeight="500">
+
+    <top>
+        <VBox>
+            <fx:include fx:id="barreNavigation" source="barre-navigation.fxml"/>
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <padding>
+                    <Insets top="12" right="20" bottom="12" left="20"/>
+                </padding>
+                <Label text="%compte.title" styleClass="titre-ecran"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="16" styleClass="tuile-kpi" maxWidth="420">
+            <padding>
+                <Insets top="24" right="24" bottom="24" left="24"/>
+            </padding>
+            <BorderPane.margin>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </BorderPane.margin>
+
+            <GridPane hgap="10" vgap="6">
+                <Label text="%compte.nom" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <Label fx:id="labelNom" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-font-weight: bold;"/>
+                <Label text="%compte.email" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <Label fx:id="labelEmail" GridPane.rowIndex="1" GridPane.columnIndex="1" style="-fx-font-weight: bold;"/>
+            </GridPane>
+
+            <GridPane hgap="10" vgap="10">
+                <Label text="%compte.motDePasseActuel" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <PasswordField fx:id="champMotDePasseActuel" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="220"/>
+                <Label text="%compte.nouveauMotDePasse" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <PasswordField fx:id="champNouveauMotDePasse" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="220"/>
+                <Label text="%compte.confirmationMotDePasse" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <PasswordField fx:id="champConfirmationMotDePasse" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="220"/>
+            </GridPane>
+
+            <Button text="%compte.enregistrer" styleClass="bouton-principal" onAction="#changerMotDePasse"/>
+        </VBox>
+    </center>
+
+</BorderPane>

@@ -48,12 +48,28 @@ public class ApiClient {
         return envoyerAvecCorps("POST", "/api/categories", requete, token, CategorieDto.class, 201);
     }
 
+    public CategorieDto modifierCategorie(Long id, CategorieRequest requete, String token) throws ApiException {
+        return envoyerAvecCorps("PUT", "/api/categories/" + id, requete, token, CategorieDto.class, 200);
+    }
+
+    public void supprimerCategorie(Long id, String token) throws ApiException {
+        supprimer("/api/categories/" + id, token, 204);
+    }
+
     public List<DepotDto> listerDepots(String token) throws ApiException {
         return versListe(get("/api/depots", token, DepotDto[].class));
     }
 
     public DepotDto creerDepot(DepotRequest requete, String token) throws ApiException {
         return envoyerAvecCorps("POST", "/api/depots", requete, token, DepotDto.class, 201);
+    }
+
+    public DepotDto modifierDepot(Long id, DepotRequest requete, String token) throws ApiException {
+        return envoyerAvecCorps("PUT", "/api/depots/" + id, requete, token, DepotDto.class, 200);
+    }
+
+    public void supprimerDepot(Long id, String token) throws ApiException {
+        supprimer("/api/depots/" + id, token, 204);
     }
 
     public List<ProduitDto> listerProduits(String token) throws ApiException {
@@ -89,6 +105,10 @@ public class ApiClient {
         return versListe(get("/api/ventes", token, VenteDto[].class));
     }
 
+    public byte[] telechargerFacture(Long venteId, String token) throws ApiException {
+        return getBinaire("/api/ventes/" + venteId + "/facture", token);
+    }
+
     public DepenseDto creerDepense(DepenseRequest requete, String token) throws ApiException {
         return envoyerAvecCorps("POST", "/api/depenses", requete, token, DepenseDto.class, 201);
     }
@@ -116,6 +136,30 @@ public class ApiClient {
 
     public ResumeIaDto obtenirResumeIa(String token, LocalDate debut, LocalDate fin) throws ApiException {
         return get("/api/reporting/resume-ia" + periode(debut, fin), token, ResumeIaDto.class);
+    }
+
+    public List<UtilisateurDto> listerUtilisateurs(String token) throws ApiException {
+        return versListe(get("/api/utilisateurs", token, UtilisateurDto[].class));
+    }
+
+    public UtilisateurDto creerUtilisateur(UtilisateurRequest requete, String token) throws ApiException {
+        return envoyerAvecCorps("POST", "/api/utilisateurs", requete, token, UtilisateurDto.class, 201);
+    }
+
+    public UtilisateurDto modifierUtilisateur(Long id, UtilisateurModificationRequest requete, String token) throws ApiException {
+        return envoyerAvecCorps("PUT", "/api/utilisateurs/" + id, requete, token, UtilisateurDto.class, 200);
+    }
+
+    public void changerMonMotDePasse(ChangerMotDePasseRequest requete, String token) throws ApiException {
+        envoyerAvecCorps("PUT", "/api/compte/mot-de-passe", requete, token, Void.class, 204);
+    }
+
+    public List<SauvegardeDto> listerSauvegardes(String token) throws ApiException {
+        return versListe(get("/api/administration/sauvegardes", token, SauvegardeDto[].class));
+    }
+
+    public SauvegardeDto declencherSauvegarde(String token) throws ApiException {
+        return envoyerAvecCorps("POST", "/api/administration/sauvegardes", null, token, SauvegardeDto.class, 201);
     }
 
     private String periode(LocalDate debut, LocalDate fin) {
@@ -147,6 +191,34 @@ public class ApiClient {
         HttpResponse<String> reponse = envoyer(builder.build());
         verifierStatut(reponse, 200);
         return lireCorps(reponse, type);
+    }
+
+    private void supprimer(String chemin, String token, int statutAttendu) throws ApiException {
+        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(urlBase + chemin))
+                .timeout(Duration.ofSeconds(10))
+                .DELETE();
+        ajouterAutorisation(builder, token);
+        HttpResponse<String> reponse = envoyer(builder.build());
+        verifierStatut(reponse, statutAttendu);
+    }
+
+    private byte[] getBinaire(String chemin, String token) throws ApiException {
+        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(urlBase + chemin))
+                .timeout(Duration.ofSeconds(10))
+                .GET();
+        ajouterAutorisation(builder, token);
+        try {
+            HttpResponse<byte[]> reponse = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofByteArray());
+            if (reponse.statusCode() != 200) {
+                throw new ApiException("Erreur serveur (" + reponse.statusCode() + ")");
+            }
+            return reponse.body();
+        } catch (IOException | InterruptedException e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            throw new ApiException("SERVEUR_INACCESSIBLE", e);
+        }
     }
 
     private <T> T envoyerAvecCorps(String methode, String chemin, Object corps, String token, Class<T> type, int statutAttendu)

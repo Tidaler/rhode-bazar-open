@@ -1,12 +1,16 @@
 package com.rhodebazar.backend.web;
 
 import com.rhodebazar.backend.security.UtilisateurPrincipal;
+import com.rhodebazar.backend.service.FactureService;
 import com.rhodebazar.backend.service.VenteService;
 import com.rhodebazar.backend.web.dto.VenteDto;
 import com.rhodebazar.backend.web.dto.VenteRequest;
 import jakarta.validation.Valid;
 import java.util.List;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,9 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class VenteController {
 
     private final VenteService venteService;
+    private final FactureService factureService;
 
-    public VenteController(VenteService venteService) {
+    public VenteController(VenteService venteService, FactureService factureService) {
         this.venteService = venteService;
+        this.factureService = factureService;
     }
 
     @GetMapping
@@ -36,6 +42,16 @@ public class VenteController {
     @GetMapping("/{id}")
     public VenteDto trouver(@PathVariable Long id) {
         return venteService.trouver(id);
+    }
+
+    @GetMapping("/{id}/facture")
+    public ResponseEntity<byte[]> telechargerFacture(@PathVariable Long id) {
+        VenteDto vente = venteService.trouver(id);
+        byte[] pdf = factureService.genererFacture(vente);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"facture-" + vente.numero() + ".pdf\"")
+                .body(pdf);
     }
 
     @PostMapping

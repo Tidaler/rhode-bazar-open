@@ -13,6 +13,7 @@ import com.rhodebazar.frontend.client.ProduitRequest;
 import com.rhodebazar.frontend.client.TypeMouvement;
 import com.rhodebazar.frontend.i18n.MessagesService;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
@@ -32,6 +33,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 public class StockController {
 
@@ -171,14 +174,12 @@ public class StockController {
 
     @FXML
     private void nouvelleCategorie() {
-        ouvrirDialogueCategorie().ifPresent(requete -> executerEtActualiser(
-                () -> apiClient.creerCategorie(requete, jeton())));
+        ouvrirDialogueGestionCategories();
     }
 
     @FXML
     private void nouveauDepot() {
-        ouvrirDialogueDepot().ifPresent(requete -> executerEtActualiser(
-                () -> apiClient.creerDepot(requete, jeton())));
+        ouvrirDialogueGestionDepots();
     }
 
     @FXML
@@ -230,14 +231,166 @@ public class StockController {
     }
 
     private <T> void executerEtActualiser(AppelApi<T> appel) {
+        executerAction(appel, this::actualiser);
+    }
+
+    private <T> void executerAction(AppelApi<T> appel, Runnable apresSucces) {
         new Thread(() -> {
             try {
                 appel.executer();
-                Platform.runLater(this::actualiser);
+                Platform.runLater(apresSucces);
             } catch (ApiException e) {
                 Platform.runLater(() -> afficherErreur(e.getMessage()));
             }
         }, "action-stock").start();
+    }
+
+    private boolean confirmerSuppression(String message) {
+        Alert alerte = new Alert(Alert.AlertType.CONFIRMATION, message, ButtonType.YES, ButtonType.NO);
+        alerte.setTitle(MessagesService.bundle().getString("confirmation.titre"));
+        alerte.setHeaderText(null);
+        Optional<ButtonType> resultat = alerte.showAndWait();
+        return resultat.isPresent() && resultat.get() == ButtonType.YES;
+    }
+
+    private void ouvrirDialogueGestionCategories() {
+        var messages = MessagesService.bundle();
+        Dialog<Void> dialogue = new Dialog<>();
+        dialogue.setTitle(messages.getString("categorie.gerer.titre"));
+        dialogue.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        dialogue.getDialogPane().getStylesheets().add(getClass().getResource("/css/theme.css").toExternalForm());
+
+        TableView<CategorieDto> table = new TableView<>(FXCollections.observableArrayList(categories));
+        TableColumn<CategorieDto, String> colonneNomTable = new TableColumn<>(messages.getString("stock.nom"));
+        colonneNomTable.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().nom()));
+        colonneNomTable.setPrefWidth(180);
+        TableColumn<CategorieDto, String> colonneDescriptionTable = new TableColumn<>(messages.getString("produit.description"));
+        colonneDescriptionTable.setCellValueFactory(d -> new SimpleStringProperty(
+                d.getValue().description() != null ? d.getValue().description() : ""));
+        colonneDescriptionTable.setPrefWidth(220);
+        table.getColumns().setAll(List.of(colonneNomTable, colonneDescriptionTable));
+        table.setPrefHeight(240);
+
+        Button boutonAjouter = new Button(messages.getString("categorie.gerer.ajouter"));
+        Button boutonModifierCategorie = new Button(messages.getString("categorie.gerer.modifier"));
+        Button boutonSupprimerCategorie = new Button(messages.getString("categorie.gerer.supprimer"));
+        boutonAjouter.getStyleClass().add("bouton-lien");
+        boutonModifierCategorie.getStyleClass().add("bouton-lien");
+        boutonSupprimerCategorie.getStyleClass().add("bouton-lien");
+        boutonModifierCategorie.setDisable(true);
+        boutonSupprimerCategorie.setDisable(true);
+        table.getSelectionModel().selectedItemProperty().addListener((obs, ancien, nouveau) -> {
+            boutonModifierCategorie.setDisable(nouveau == null);
+            boutonSupprimerCategorie.setDisable(nouveau == null);
+        });
+
+        Runnable rafraichir = () -> new Thread(() -> {
+            try {
+                List<CategorieDto> fraiches = apiClient.listerCategories(jeton());
+                Platform.runLater(() -> {
+                    categories = fraiches;
+                    table.setItems(FXCollections.observableArrayList(fraiches));
+                });
+            } catch (ApiException e) {
+                Platform.runLater(() -> afficherErreur(e.getMessage()));
+            }
+        }, "rafraichissement-categories").start();
+
+        boutonAjouter.setOnAction(e -> ouvrirDialogueCategorie(null).ifPresent(requete ->
+                executerAction(() -> apiClient.creerCategorie(requete, jeton()), rafraichir)));
+        boutonModifierCategorie.setOnAction(e -> {
+            CategorieDto selection = table.getSelectionModel().getSelectedItem();
+            if (selection != null) {
+                ouvrirDialogueCategorie(selection).ifPresent(requete -> executerAction(
+                        () -> apiClient.modifierCategorie(selection.id(), requete, jeton()), rafraichir));
+            }
+        });
+        boutonSupprimerCategorie.setOnAction(e -> {
+            CategorieDto selection = table.getSelectionModel().getSelectedItem();
+            if (selection != null && confirmerSuppression(
+                    MessageFormat.format(messages.getString("categorie.gerer.confirmationSuppression"), selection.nom()))) {
+                executerAction(() -> {
+                    apiClient.supprimerCategorie(selection.id(), jeton());
+                    return null;
+                }, rafraichir);
+            }
+        });
+
+        VBox contenu = new VBox(10, table, new HBox(10, boutonAjouter, boutonModifierCategorie, boutonSupprimerCategorie));
+        contenu.setPrefWidth(430);
+        dialogue.getDialogPane().setContent(contenu);
+        dialogue.showAndWait();
+        actualiser();
+    }
+
+    private void ouvrirDialogueGestionDepots() {
+        var messages = MessagesService.bundle();
+        Dialog<Void> dialogue = new Dialog<>();
+        dialogue.setTitle(messages.getString("depot.gerer.titre"));
+        dialogue.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        dialogue.getDialogPane().getStylesheets().add(getClass().getResource("/css/theme.css").toExternalForm());
+
+        TableView<DepotDto> table = new TableView<>(FXCollections.observableArrayList(depots));
+        TableColumn<DepotDto, String> colonneNomTable = new TableColumn<>(messages.getString("stock.nom"));
+        colonneNomTable.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().nom()));
+        colonneNomTable.setPrefWidth(180);
+        TableColumn<DepotDto, String> colonneAdresseTable = new TableColumn<>(messages.getString("depot.adresse"));
+        colonneAdresseTable.setCellValueFactory(d -> new SimpleStringProperty(
+                d.getValue().adresse() != null ? d.getValue().adresse() : ""));
+        colonneAdresseTable.setPrefWidth(220);
+        table.getColumns().setAll(List.of(colonneNomTable, colonneAdresseTable));
+        table.setPrefHeight(240);
+
+        Button boutonAjouter = new Button(messages.getString("depot.gerer.ajouter"));
+        Button boutonModifierDepot = new Button(messages.getString("depot.gerer.modifier"));
+        Button boutonSupprimerDepot = new Button(messages.getString("depot.gerer.supprimer"));
+        boutonAjouter.getStyleClass().add("bouton-lien");
+        boutonModifierDepot.getStyleClass().add("bouton-lien");
+        boutonSupprimerDepot.getStyleClass().add("bouton-lien");
+        boutonModifierDepot.setDisable(true);
+        boutonSupprimerDepot.setDisable(true);
+        table.getSelectionModel().selectedItemProperty().addListener((obs, ancien, nouveau) -> {
+            boutonModifierDepot.setDisable(nouveau == null);
+            boutonSupprimerDepot.setDisable(nouveau == null);
+        });
+
+        Runnable rafraichir = () -> new Thread(() -> {
+            try {
+                List<DepotDto> fraiches = apiClient.listerDepots(jeton());
+                Platform.runLater(() -> {
+                    depots = fraiches;
+                    table.setItems(FXCollections.observableArrayList(fraiches));
+                });
+            } catch (ApiException e) {
+                Platform.runLater(() -> afficherErreur(e.getMessage()));
+            }
+        }, "rafraichissement-depots").start();
+
+        boutonAjouter.setOnAction(e -> ouvrirDialogueDepot(null).ifPresent(requete ->
+                executerAction(() -> apiClient.creerDepot(requete, jeton()), rafraichir)));
+        boutonModifierDepot.setOnAction(e -> {
+            DepotDto selection = table.getSelectionModel().getSelectedItem();
+            if (selection != null) {
+                ouvrirDialogueDepot(selection).ifPresent(requete -> executerAction(
+                        () -> apiClient.modifierDepot(selection.id(), requete, jeton()), rafraichir));
+            }
+        });
+        boutonSupprimerDepot.setOnAction(e -> {
+            DepotDto selection = table.getSelectionModel().getSelectedItem();
+            if (selection != null && confirmerSuppression(
+                    MessageFormat.format(messages.getString("depot.gerer.confirmationSuppression"), selection.nom()))) {
+                executerAction(() -> {
+                    apiClient.supprimerDepot(selection.id(), jeton());
+                    return null;
+                }, rafraichir);
+            }
+        });
+
+        VBox contenu = new VBox(10, table, new HBox(10, boutonAjouter, boutonModifierDepot, boutonSupprimerDepot));
+        contenu.setPrefWidth(430);
+        dialogue.getDialogPane().setContent(contenu);
+        dialogue.showAndWait();
+        actualiser();
     }
 
     private Optional<ProduitRequest> ouvrirDialogueProduit(ProduitDto existant) {
@@ -376,16 +529,16 @@ public class StockController {
         return dialogue.showAndWait();
     }
 
-    private Optional<CategorieRequest> ouvrirDialogueCategorie() {
+    private Optional<CategorieRequest> ouvrirDialogueCategorie(CategorieDto existant) {
         var messages = MessagesService.bundle();
         Dialog<CategorieRequest> dialogue = new Dialog<>();
-        dialogue.setTitle(messages.getString("categorie.titreAjout"));
+        dialogue.setTitle(existant == null ? messages.getString("categorie.titreAjout") : messages.getString("categorie.titreModification"));
         dialogue.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         dialogue.getDialogPane().getStylesheets().add(
                 getClass().getResource("/css/theme.css").toExternalForm());
 
-        TextField champNom = new TextField();
-        TextArea champDescription = new TextArea();
+        TextField champNom = new TextField(existant != null ? existant.nom() : "");
+        TextArea champDescription = new TextArea(existant != null && existant.description() != null ? existant.description() : "");
         champDescription.setPrefRowCount(2);
 
         GridPane grille = new GridPane();
@@ -409,16 +562,16 @@ public class StockController {
         return dialogue.showAndWait();
     }
 
-    private Optional<DepotRequest> ouvrirDialogueDepot() {
+    private Optional<DepotRequest> ouvrirDialogueDepot(DepotDto existant) {
         var messages = MessagesService.bundle();
         Dialog<DepotRequest> dialogue = new Dialog<>();
-        dialogue.setTitle(messages.getString("depot.titreAjout"));
+        dialogue.setTitle(existant == null ? messages.getString("depot.titreAjout") : messages.getString("depot.titreModification"));
         dialogue.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         dialogue.getDialogPane().getStylesheets().add(
                 getClass().getResource("/css/theme.css").toExternalForm());
 
-        TextField champNom = new TextField();
-        TextField champAdresse = new TextField();
+        TextField champNom = new TextField(existant != null ? existant.nom() : "");
+        TextField champAdresse = new TextField(existant != null && existant.adresse() != null ? existant.adresse() : "");
 
         GridPane grille = new GridPane();
         grille.setHgap(10);

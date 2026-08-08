@@ -43,6 +43,14 @@ public final class SceneManager {
         charger("/fxml/reporting.fxml", MessagesService.bundle().getString("reporting.title"));
     }
 
+    public static void afficherEcranAdministration() {
+        charger("/fxml/administration.fxml", MessagesService.bundle().getString("administration.title"));
+    }
+
+    public static void afficherEcranMonCompte() {
+        charger("/fxml/mon-compte.fxml", MessagesService.bundle().getString("compte.title"));
+    }
+
     private static void charger(String cheminFxml, String titre) {
         try {
             FXMLLoader loader = new FXMLLoader(

@@ -10,7 +10,9 @@ import com.rhodebazar.frontend.client.ProduitDto;
 import com.rhodebazar.frontend.client.VenteDto;
 import com.rhodebazar.frontend.client.VenteRequest;
 import com.rhodebazar.frontend.i18n.MessagesService;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -28,6 +30,8 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
 import javafx.util.StringConverter;
 
 public class VenteController {
@@ -87,6 +91,9 @@ public class VenteController {
     private TableColumn<VenteDto, String> colonneHistoriqueMontant;
 
     @FXML
+    private Button boutonTelechargerFacture;
+
+    @FXML
     private BarreNavigationController barreNavigationController;
 
     private final ApiClient apiClient = new ApiClient();
@@ -144,6 +151,8 @@ public class VenteController {
         colonneHistoriqueMode.setCellValueFactory(d -> new SimpleStringProperty(
                 messages.getString("vente.mode." + d.getValue().modePaiement().name())));
         colonneHistoriqueMontant.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().montantTotal().toPlainString()));
+        tableHistorique.getSelectionModel().selectedItemProperty().addListener(
+                (obs, ancien, nouveau) -> boutonTelechargerFacture.setDisable(nouveau == null));
 
         mettreAJourTotal();
         if (barreNavigationController != null) {
@@ -266,6 +275,39 @@ public class VenteController {
                 Platform.runLater(() -> afficherErreur(e.getMessage()));
             }
         }, "enregistrement-vente").start();
+    }
+
+    @FXML
+    private void telechargerFacture() {
+        VenteDto vente = tableHistorique.getSelectionModel().getSelectedItem();
+        if (vente == null) {
+            return;
+        }
+        var messages = MessagesService.bundle();
+
+        FileChooser selecteur = new FileChooser();
+        selecteur.setTitle(messages.getString("vente.facture.titreDialogue"));
+        selecteur.setInitialFileName("facture-" + vente.numero() + ".pdf");
+        selecteur.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
+        Window fenetre = boutonTelechargerFacture.getScene().getWindow();
+        java.io.File fichier = selecteur.showSaveDialog(fenetre);
+        if (fichier == null) {
+            return;
+        }
+
+        String token = Session.getUtilisateurConnecte().token();
+        new Thread(() -> {
+            try {
+                byte[] pdf = apiClient.telechargerFacture(vente.id(), token);
+                Files.write(fichier.toPath(), pdf);
+                Platform.runLater(() -> afficherInfo(
+                        MessagesService.bundle().getString("vente.facture.succes").replace("{0}", fichier.getName())));
+            } catch (ApiException e) {
+                Platform.runLater(() -> afficherErreur(e.getMessage()));
+            } catch (IOException e) {
+                Platform.runLater(() -> afficherErreur(e.getMessage()));
+            }
+        }, "telechargement-facture").start();
     }
 
     private void mettreAJourTotal() {

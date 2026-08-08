@@ -64,12 +64,24 @@ class FxmlLoadingTest {
     }
 
     @Test
+    void ecranAdministrationSeCharge() throws Exception {
+        chargerSurThreadFx("/fxml/administration.fxml", Locale.FRENCH);
+    }
+
+    @Test
+    void ecranMonCompteSeCharge() throws Exception {
+        chargerSurThreadFx("/fxml/mon-compte.fxml", Locale.FRENCH);
+    }
+
+    @Test
     void ecransSeChargentEnAnglais() throws Exception {
         chargerSurThreadFx("/fxml/login.fxml", Locale.ENGLISH);
         chargerSurThreadFx("/fxml/stock.fxml", Locale.ENGLISH);
         chargerSurThreadFx("/fxml/ventes.fxml", Locale.ENGLISH);
         chargerSurThreadFx("/fxml/depenses.fxml", Locale.ENGLISH);
         chargerSurThreadFx("/fxml/reporting.fxml", Locale.ENGLISH);
+        chargerSurThreadFx("/fxml/administration.fxml", Locale.ENGLISH);
+        chargerSurThreadFx("/fxml/mon-compte.fxml", Locale.ENGLISH);
     }
 
     private void chargerSurThreadFx(String cheminFxml, Locale locale) throws Exception {
