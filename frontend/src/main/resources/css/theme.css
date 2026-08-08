@@ -95,6 +95,19 @@
     -fx-text-fill: -color-blanc;
 }
 
+.barre-application .bouton-lien {
+    -fx-text-fill: -color-blanc;
+    -fx-font-weight: bold;
+}
+
+.barre-application .bouton-lien:hover {
+    -fx-text-fill: -color-or;
+}
+
+.barre-application .bouton-lien.bouton-lien-actif {
+    -fx-text-fill: -color-or;
+}
+
 .ligne-alerte {
     -fx-background-color: derive(-color-erreur, 85%);
 }
