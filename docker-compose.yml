@@ -9,7 +9,7 @@ services:
       MYSQL_DATABASE: rhodebazar
       MYSQL_USER: rhodebazar
       MYSQL_PASSWORD: ${RHODEBAZAR_DB_PASSWORD:-rhodebazar}
-      MYSQL_ROOT_PASSWORD: ${RHODEBAZAR_DB_ROOT_PASSWORD:-changez-moi}
+      MYSQL_ROOT_PASSWORD: ${RHODEBAZAR_DB_ROOT_PASSWORD:-root}
     volumes:
       - rhodebazar-mysql-data:/var/lib/mysql
     healthcheck:
