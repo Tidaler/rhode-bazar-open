@@ -10,6 +10,8 @@ import com.rhodebazar.frontend.client.ProduitDto;
 import com.rhodebazar.frontend.client.VenteDto;
 import com.rhodebazar.frontend.client.VenteRequest;
 import com.rhodebazar.frontend.i18n.MessagesService;
+import java.awt.Desktop;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -264,7 +266,8 @@ public class VenteController {
 
         new Thread(() -> {
             try {
-                apiClient.creerVente(requete, token);
+                VenteDto venteCreee = apiClient.creerVente(requete, token);
+                ouvrirTicketPourImpression(venteCreee, token);
                 Platform.runLater(() -> {
                     panier.clear();
                     champClient.clear();
@@ -275,6 +278,20 @@ public class VenteController {
                 Platform.runLater(() -> afficherErreur(e.getMessage()));
             }
         }, "enregistrement-vente").start();
+    }
+
+    private void ouvrirTicketPourImpression(VenteDto vente, String token) {
+        try {
+            byte[] pdf = apiClient.telechargerFacture(vente.id(), token);
+            File fichierTemporaire = File.createTempFile("facture-" + vente.numero() + "-", ".pdf");
+            fichierTemporaire.deleteOnExit();
+            Files.write(fichierTemporaire.toPath(), pdf);
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+                Desktop.getDesktop().open(fichierTemporaire);
+            }
+        } catch (Exception e) {
+            Platform.runLater(() -> afficherErreur(MessagesService.bundle().getString("vente.facture.ouvertureEchouee")));
+        }
     }
 
     @FXML

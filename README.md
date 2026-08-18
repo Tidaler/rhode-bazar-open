@@ -1,4 +1,4 @@
-# ManagEx — Application de Gestion
+# ManagEx - Application de Gestion
 
 *Déployée ici pour la boutique Rhode Bazar.*
 
@@ -61,4 +61,4 @@ L'interface est en français par défaut, avec une option de bascule vers l'angl
 
 ---
 
-*ManagEx — projet privé.*
+*ManagEx - projet privé.*

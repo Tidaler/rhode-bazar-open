@@ -1,4 +1,4 @@
-# Cahier des Charges — Application de Gestion Rhode Bazar
+# Cahier des Charges - Application de Gestion Rhode Bazar
 
 > Transcription du cahier des charges validé avec le client (version de référence pour le développement).
 

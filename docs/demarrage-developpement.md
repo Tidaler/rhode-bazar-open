@@ -1,4 +1,4 @@
-# Guide de démarrage — développement
+# Guide de démarrage - développement
 
 ## Prérequis
 
@@ -19,7 +19,7 @@ dossier `bin` au PATH (et définissez `JAVA_HOME` vers le JDK 21).
 ## Lancer le backend (API Spring Boot)
 
 Par défaut, le backend utilise **SQLite** (base de données locale, fichier créé automatiquement
-dans `~/.rhodebazar/rhodebazar.db`) — aucune installation de base de données n'est nécessaire.
+dans `~/.rhodebazar/rhodebazar.db`) - aucune installation de base de données n'est nécessaire.
 
 ```bash
 cd backend
@@ -28,7 +28,7 @@ mvn spring-boot:run
 
 Au premier démarrage, un compte administrateur est créé automatiquement si aucun utilisateur
 n'existe. Son mot de passe est généré aléatoirement et affiché **une seule fois** dans les logs
-(niveau WARN) — notez-le. Vous pouvez aussi imposer un mot de passe via la variable
+(niveau WARN) - notez-le. Vous pouvez aussi imposer un mot de passe via la variable
 d'environnement `RHODEBAZAR_ADMIN_PASSWORD` avant le premier démarrage.
 
 L'API écoute par défaut sur `http://localhost:8085`.

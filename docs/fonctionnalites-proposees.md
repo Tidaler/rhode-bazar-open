@@ -9,7 +9,7 @@
 - **Bons de commande fournisseurs** liés au réapprovisionnement (déclenchés automatiquement sur seuil critique).
 - **Gestion des retours et du SAV** (produit défectueux, échange, remboursement).
 - **Promotions et remises** (soldes, remises ponctuelles, prix par lot).
-- **Variantes de produits** (couleur, taille, modèle) — pertinent pour des articles de décoration déclinés en plusieurs versions.
+- **Variantes de produits** (couleur, taille, modèle) - pertinent pour des articles de décoration déclinés en plusieurs versions.
 
 ## Caisse et facturation
 
