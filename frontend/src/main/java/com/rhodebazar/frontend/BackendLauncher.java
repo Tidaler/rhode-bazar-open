@@ -21,6 +21,7 @@ import java.time.Instant;
 public final class BackendLauncher {
 
     private static final String NOM_JAR_BACKEND = "rhode-bazar-backend.jar";
+    private static final String NOM_FICHIER_JOURNAL = "backend.log";
     private static final String URL_SANTE = "http://localhost:8085/actuator/health";
     private static final Duration DELAI_MAXIMAL = Duration.ofSeconds(30);
 
@@ -47,13 +48,23 @@ public final class BackendLauncher {
             ProcessBuilder constructeur = new ProcessBuilder(javaExecutable, "-jar", jarBackend.getAbsolutePath());
             constructeur.directory(jarBackend.getParentFile());
             constructeur.redirectErrorStream(true);
-            constructeur.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+            // Journalise plutot que de jeter la sortie : le mot de passe administrateur genere
+            // aleatoirement au tout premier demarrage (voir AdminInitializer cote backend) n'est
+            // affiche qu'une seule fois, et javaw.exe ne montre aucune console - sans ce fichier,
+            // ce mot de passe serait perdu de facon irrecuperable des le premier lancement.
+            constructeur.redirectOutput(ProcessBuilder.Redirect.appendTo(fichierJournal()));
             processusBackend = constructeur.start();
         } catch (IOException e) {
             return false;
         }
 
         return attendreDisponibilite();
+    }
+
+    private static File fichierJournal() {
+        File dossierDonnees = new File(System.getProperty("user.home"), ".rhodebazar");
+        dossierDonnees.mkdirs();
+        return new File(dossierDonnees, NOM_FICHIER_JOURNAL);
     }
 
     /** Arrete proprement le sous-processus backend, s'il a ete lance. */

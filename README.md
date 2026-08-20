@@ -87,6 +87,16 @@ Le résultat final est déposé dans `target/dist/ManagEx-<version>.msi` (à la 
 dépôt). `mvn package` sans `-Pdistribution` reconstruit backend + frontend comme
 d'habitude, sans toucher à l'installateur.
 
+### Mot de passe administrateur au tout premier démarrage
+
+Au tout premier lancement sur un poste neuf (aucune base `~/.rhodebazar/rhodebazar.db`
+existante), un compte `admin@rhodebazar.local` est créé automatiquement avec un mot
+de passe généré aléatoirement, affiché **une seule fois**. Comme l'application
+packagée lance le backend sans fenêtre de console, ce mot de passe est écrit dans
+`%USERPROFILE%\.rhodebazar\backend.log` (rechercher la ligne
+`Mot de passe genere` juste après l'installation) - à noter et changer immédiatement
+via "Mon compte" une fois connecté.
+
 ### Publier une mise à jour
 
 Les boutiques déjà équipées reçoivent les mises à jour en exécutant simplement le
