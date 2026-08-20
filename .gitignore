@@ -6,6 +6,8 @@ out/
 *.jar
 !.mvn/wrapper/maven-wrapper.jar
 .gradle/
+dependency-reduced-pom.xml
+*.versionsBackup
 
 # --- IDE ---
 .idea/

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.rhodebazar</groupId>
+        <artifactId>rhode-bazar-parent</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>rhode-bazar-installer</artifactId>
+    <packaging>pom</packaging>
+    <name>rhode-bazar-installer</name>
+    <description>Genere l'installeur Windows (.msi) de ManagEx via jlink + jpackage. Actif uniquement sous le profil "distribution".</description>
+
+    <properties>
+        <!-- Dossier contenant les jmods JavaFX pour Windows (paquet binaire officiel OpenJFX,
+             separe du JDK). A telecharger une fois - voir README, section "Packaging & distribution". -->
+        <javafx.jmods.dir>${user.home}/tools/javafx-jmods-${javafx.version}</javafx.jmods.dir>
+        <javafx.version>21.0.7</javafx.version>
+
+        <!--
+          UpgradeCode WiX - IDENTIFIANT FIXE, NE JAMAIS MODIFIER.
+          C'est ce GUID (et lui seul) qui permet a une nouvelle version de remplacer
+          proprement l'ancienne sur les postes deja equipes (meme emplacement, pas de
+          doublon dans la liste des programmes installes). Change ce GUID = casse la mise
+          a jour automatique pour toutes les boutiques deja equipees. Voir README.
+        -->
+        <managex.win.upgrade.uuid>cd52cea4-dea9-4e92-aea9-0ef1dfa4db05</managex.win.upgrade.uuid>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.rhodebazar</groupId>
+            <artifactId>rhode-bazar-backend</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.rhodebazar</groupId>
+            <artifactId>rhode-bazar-frontend</artifactId>
+            <version>${project.version}</version>
+            <classifier>shaded</classifier>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Deduit un numero de version propre (sans "-SNAPSHOT") depuis ${project.version},
+                 requis par jpackage/WiX pour l'option app-version (format numerique strict sur MSI). -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>extraire-version-numerique</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>parse-version</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Etape jlink : image JRE minimale (JDK + JavaFX Windows) reutilisee par jpackage. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.4.1</version>
+                <executions>
+                    <execution>
+                        <id>jlink-image-runtime</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${java.home}/bin/jlink</executable>
+                            <arguments>
+                                <argument>--module-path</argument>
+                                <argument>${java.home}/jmods${path.separator}${javafx.jmods.dir}</argument>
+                                <argument>--add-modules</argument>
+                                <argument>java.base,java.desktop,java.instrument,java.logging,java.management,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.security.jgss,java.security.sasl,java.sql,java.transaction.xa,java.xml,jdk.crypto.ec,jdk.crypto.cryptoki,jdk.management,jdk.unsupported,jdk.zipfs,javafx.base,javafx.controls,javafx.fxml,javafx.graphics</argument>
+                                <argument>--output</argument>
+                                <argument>${project.build.directory}/runtime</argument>
+                                <argument>--strip-debug</argument>
+                                <argument>--no-header-files</argument>
+                                <argument>--no-man-pages</argument>
+                                <argument>--compress=zip-6</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Rassemble le jar backend (deja executable) et le jar frontend "fat" dans un
+                 seul dossier d'entree pour jpackage, avec des noms de fichiers fixes (le jar
+                 backend doit s'appeler exactement rhode-bazar-backend.jar : BackendLauncher.java
+                 le recherche sous ce nom precis a cote du jar frontend). -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.7.1</version>
+                <executions>
+                    <execution>
+                        <id>copier-jars-application</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.rhodebazar</groupId>
+                                    <artifactId>rhode-bazar-backend</artifactId>
+                                    <version>${project.version}</version>
+                                    <destFileName>rhode-bazar-backend.jar</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.rhodebazar</groupId>
+                                    <artifactId>rhode-bazar-frontend</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>shaded</classifier>
+                                    <destFileName>rhode-bazar-frontend-shaded.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.directory}/app-input</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- jpackage : produit l'installeur MSI final dans <racine>/target/dist/. -->
+            <plugin>
+                <groupId>org.panteleyev</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jpackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <name>ManagEx</name>
+                    <appVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</appVersion>
+                    <vendor>TidalEx Data Solution and Business</vendor>
+                    <description>ManagEx - application de gestion (stock, ventes, depenses, reporting)</description>
+                    <destination>${project.basedir}/../target/dist</destination>
+                    <input>${project.build.directory}/app-input</input>
+                    <mainJar>rhode-bazar-frontend-shaded.jar</mainJar>
+                    <mainClass>com.rhodebazar.frontend.Launcher</mainClass>
+                    <icon>${project.basedir}/src/main/resources/managex.ico</icon>
+                    <type>MSI</type>
+                    <runtimeImage>${project.build.directory}/runtime</runtimeImage>
+                    <winMenu>true</winMenu>
+                    <winShortcut>true</winShortcut>
+                    <winPerUserInstall>false</winPerUserInstall>
+                    <!-- NE JAMAIS MODIFIER : voir la propriete managex.win.upgrade.uuid ci-dessus. -->
+                    <winUpgradeUuid>${managex.win.upgrade.uuid}</winUpgradeUuid>
+                    <verbose>true</verbose>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

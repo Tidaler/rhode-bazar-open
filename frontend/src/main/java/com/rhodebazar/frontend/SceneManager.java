@@ -3,12 +3,15 @@ package com.rhodebazar.frontend;
 import com.rhodebazar.frontend.i18n.MessagesService;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Properties;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /** Point central pour charger les ecrans FXML dans la fenetre principale, avec le bon theme et la bonne langue. */
 public final class SceneManager {
+
+    private static final String VERSION = chargerVersion();
 
     private static Stage stagePrincipal;
 
@@ -60,11 +63,26 @@ public final class SceneManager {
             scene.getStylesheets().add(
                     Objects.requireNonNull(SceneManager.class.getResource("/css/theme.css")).toExternalForm());
 
-            stagePrincipal.setTitle("ManagEx - " + titre);
+            stagePrincipal.setTitle("ManagEx - " + titre + VERSION);
             stagePrincipal.setScene(scene);
             stagePrincipal.show();
         } catch (IOException e) {
             throw new IllegalStateException("Impossible de charger l'ecran : " + cheminFxml, e);
+        }
+    }
+
+    private static String chargerVersion() {
+        try (var flux = SceneManager.class.getResourceAsStream("/version.properties")) {
+            if (flux == null) {
+                return "";
+            }
+            Properties proprietes = new Properties();
+            proprietes.load(flux);
+            String version = proprietes.getProperty("version");
+            return (version != null && !version.isBlank() && !version.startsWith("$"))
+                    ? " (v" + version + ")" : "";
+        } catch (IOException e) {
+            return "";
         }
     }
 }

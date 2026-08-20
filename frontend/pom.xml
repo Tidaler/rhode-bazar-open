@@ -16,6 +16,9 @@
         <maven.compiler.release>21</maven.compiler.release>
         <javafx.version>21.0.7</javafx.version>
         <main.class>com.rhodebazar.frontend.MainApp</main.class>
+        <!-- Classe de lancement pour le jar "fat"/jpackage - voir Launcher.java (javafx:run
+             continue d'utiliser main.class=MainApp directement, sans ce contournement). -->
+        <launcher.class>com.rhodebazar.frontend.Launcher</launcher.class>
     </properties>
 
     <dependencies>
@@ -47,6 +50,24 @@
 
     <build>
         <finalName>rhode-bazar-frontend</finalName>
+        <resources>
+            <!-- version.properties est filtre (${project.version} substitue) ; tout le reste
+                 ne l'est pas, pour ne jamais toucher aux i18n/FXML (qui utilisent {0}, %cle, etc.). -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>version.properties</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>version.properties</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -65,4 +86,78 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- Active uniquement par "mvn -Pdistribution package" (voir module installer/) :
+             produit un jar "fat" autonome (toutes les dependances + les binaires natifs
+             JavaFX Windows) pour l'empaqueter avec jpackage. N'affecte pas "mvn javafx:run". -->
+        <profile>
+            <id>distribution</id>
+            <dependencies>
+                <!-- Classifier "win" : binaires natifs JavaFX pour Windows, necessaires
+                     hors du javafx-maven-plugin (qui les resout lui-meme pour javafx:run). -->
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-controls</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>win</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-fxml</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>win</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-graphics</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>win</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-base</artifactId>
+                    <version>${javafx.version}</version>
+                    <classifier>win</classifier>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>3.5.1</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                                    <shadedClassifierName>shaded</shadedClassifierName>
+                                    <transformers>
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                            <mainClass>${launcher.class}</mainClass>
+                                        </transformer>
+                                    </transformers>
+                                    <filters>
+                                        <filter>
+                                            <artifact>*:*</artifact>
+                                            <excludes>
+                                                <exclude>module-info.class</exclude>
+                                                <exclude>META-INF/*.SF</exclude>
+                                                <exclude>META-INF/*.DSA</exclude>
+                                                <exclude>META-INF/*.RSA</exclude>
+                                            </excludes>
+                                        </filter>
+                                    </filters>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

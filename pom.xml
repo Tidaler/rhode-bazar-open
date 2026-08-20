@@ -22,4 +22,16 @@
         <java.version>21</java.version>
         <maven.compiler.release>21</maven.compiler.release>
     </properties>
+
+    <profiles>
+        <!-- "mvn -Pdistribution package" : ajoute le module installer/ (jlink + jpackage),
+             qui produit l'installeur Windows dans target/dist/. N'affecte pas "mvn package"
+             normal (backend + frontend uniquement, comme aujourd'hui). -->
+        <profile>
+            <id>distribution</id>
+            <modules>
+                <module>installer</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>
