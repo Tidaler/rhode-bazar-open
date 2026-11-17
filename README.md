@@ -155,3 +155,7 @@ L'interface est en français par défaut, avec une option de bascule vers l'angl
 ---
 
 *ManagEx - projet privé.*
+
+## Licence
+
+MIT, voir [LICENSE](LICENSE).
